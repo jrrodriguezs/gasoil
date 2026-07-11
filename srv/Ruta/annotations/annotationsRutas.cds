@@ -66,6 +66,8 @@ annotate ConfigService.Rutas with @UI.LineItem #RutaVH : [
 annotate ConfigService.Rutas with @UI.PresentationVariant #RutaVH : {
   Visualizations : ['@UI.LineItem#RutaVH']
 };
+
+annotate ConfigService.PuntoCoordenadas with @(
 	UI : {
 		LineItem : [
 			{ Value : descripcion, Label : 'Descripcion' },
