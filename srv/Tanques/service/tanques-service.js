@@ -35,7 +35,7 @@ module.exports = async (srv) => {
     });
 
     srv.after(['CREATE', 'UPDATE'], Tanques, async (data, req) => {
-        if (record?.nivel_actual == null || record?.nivel_minimo == null) return;
+        if (data?.nivel_actual == null || data?.nivel_minimo == null) return;
         const nivelActual = Number(data.nivel_actual);
         const nivelMinimo = Number(data.nivel_minimo);
 
