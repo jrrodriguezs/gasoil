@@ -61,12 +61,12 @@ annotate ConfigService.Vehiculos with @(
       Criticality : estadodelvehiculo.criticality,
       Title : 'Estado de la unidad'
     },
-    DataPoint #KmToatles : {
+    DataPoint #KmTotales : {
       Value : kmTotales,
       Criticality : estadodelvehiculo.criticality,
       Title : 'Total de km recorridos'
     },
-    DataPoint #LtrosTotales : {
+    DataPoint #LitrosTotales : {
       Value : litrosTotales,
       Criticality : estadodelvehiculo.criticality,
       Title : 'Total litros consumidos'
