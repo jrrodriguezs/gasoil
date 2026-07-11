@@ -8,6 +8,7 @@ using from './Transmision/annotations/annotationsTransmisiones';
 using from './Caja/annotations/annotationsCajas';
 using from './Almacen/annotations/annotationsAlmacen';
 using from './Tanques/annotations/annotationsTanques.cds';
+using from './Vehiculo/annotations/annotationsVehiculos';
 using from './Proveedor/annotations/annotationsProveedor';
 using from './OrdenCarga/annotations/annotationsOrdenCarga';
 using from './SurtidoUnidad/annotations/annotationsSurtidoUnidad';

@@ -29,8 +29,8 @@ annotate ConfigService.Vehiculos with @(
     },
     HeaderFacets : [
       { $Type : 'UI.ReferenceURLFacet', Target : '@UI.HeaderInfo'},
-      { $Type : 'UI.ReferenceFacet'   , Target : '@UI.DataPoint#KmToatles' },
-      { $Type : 'UI.ReferenceFacet'   , Target : '@UI.DataPoint#LtrosTotales' },
+      { $Type : 'UI.ReferenceFacet'   , Target : '@UI.DataPoint#KmTotales' },
+      { $Type : 'UI.ReferenceFacet'   , Target : '@UI.DataPoint#LitrosTotales' },
       { $Type : 'UI.ReferenceFacet'   , Target : '@UI.DataPoint#RendimientoBase' },
       { $Type : 'UI.ReferenceFacet'   , Target : '@UI.DataPoint#RendimientoReal' },
       { $Type : 'UI.ReferenceFacet'   , Target : '@UI.DataPoint#CargaUtil' },

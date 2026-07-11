@@ -8,7 +8,7 @@ namespace gas.app;
 aspect ChoferRequired {
   @mandatory nombre                                    : String;
   @mandatory apellido                                  : String;
-  @assert.unique @mandatory @assert.ranger cedula      : String;
+  @assert.unique @mandatory @assert.range cedula      : String;
   @mandatory direccion                                 : String;
   @mandatory 
   telefono                                             : String @assert.range : { minimum: 11, message: 'El teléfono del chofer debe tener al menos 11 dígitos' };
