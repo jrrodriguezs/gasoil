@@ -1,0 +1,65 @@
+Modelos de motor a evaluar : 
+Mack E7-330
+Mack E7-350
+Mack E7-427
+Mack MP8-440
+
+Transmisión a utilizar 
+relacion 5:1
+relacion 3:1
+
+
+Entidad Motor
+ID                 : UUID (usar ciud para manejo automatico de id)
+modelo             : String	
+serie              : String	
+factorEficiencia   : Float	
+torqueMax          : Float	
+cilindrada         : Float	
+tipoEmision        : String	
+
+
+
+Entidad Transmisión
+ID                   :  UUID (usar ciud para manejo automatico de id)
+modeloCaja          :	String	
+relacionDiferencial :	Float	
+factorTransmision   :	Float	
+numeroVelocidades   :	Int	
+tipoEje             :	String	eje doble o simple
+capacidadCargaEje  :	Float	
+
+
+-------------------------------------------------------------------------------------------------------
+
+Modelos de motor a evaluar : 
+Mack E7-330
+Mack E7-350
+Mack E7-427
+Mack MP8-440
+
+Transmisión a utilizar 
+relacion 5:1
+relacion 3:1
+relacion 4.5
+
+
+entity Motores
+    modelo           : String;      
+    serie            : String;      
+    factorEficiencia : Double;     
+    torqueMax        : Double;      
+    cilindrada       : Double;      
+    tipoEmision      : String;      
+
+entity Cajas 
+    modeloCaja        : String;     
+    numeroVelocidades : Integer;    
+    factorTransmision : Double;     
+
+
+entity Diferenciales 
+    modeloDiferencial   : String;   
+    relacionDiferencial : Double;   
+    tipoEje             : String;   
+    capacidadCargaEje   : Double;   

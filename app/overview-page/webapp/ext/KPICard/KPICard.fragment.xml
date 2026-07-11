@@ -1,0 +1,64 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:ovp="sap.ovp.ui"
+xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+    <VBox class="kpiStripRoot sapUiTinyMargin">
+        <HBox class="kpiStripGrid" wrap="Wrap" justifyContent="SpaceBetween">
+            <VBox class="kpiTile" width="13.8rem">
+                <HBox justifyContent="SpaceBetween" alignItems="Center" class="kpiTileHeader">
+                    <Text text="Rendimiento Promedio Flota" class="kpiTileTitle"/>
+                </HBox>
+                <HBox alignItems="End" class="sapUiTinyMarginTop">
+                    <Text text="{KPIModel>/avgPerformance}" class="kpiValue kpiValueGreen"/>
+                    <Text text="km/L" class="kpiUnit"/>
+                </HBox>
+                <HBox class="sapUiTinyMarginTop" alignItems="Center" visible="false">
+                    <core:Icon src="sap-icon://trend-up" class="kpiTrendIcon kpiValueGreen"/>
+                    <Text text="{kpi>/tiles/0/delta}" class="kpiDelta kpiValueGreen"/>
+                </HBox>
+            </VBox>
+
+            <VBox class="kpiTile" width="13.8rem">
+                <HBox justifyContent="SpaceBetween" alignItems="Center" class="kpiTileHeader">
+                    <Text text="Costo Combustible / Km" class="kpiTileTitle"/>
+                </HBox>
+                <HBox alignItems="End" class="sapUiTinyMarginTop">
+                    <Text text="{KPIModel>/fuelCostPerKm}" class="kpiValue kpiValueRed"/>
+                    <Text text="USD" class="kpiUnit"/>
+                </HBox>
+                <HBox class="sapUiTinyMarginTop" alignItems="Center" visible="false">
+                    <core:Icon src="sap-icon://trend-up" class="kpiTrendIcon kpiValueRed"/>
+                    <Text text="{kpi>/tiles/1/delta}" class="kpiDelta kpiValueRed"/>
+                </HBox>
+            </VBox>
+
+            <VBox class="kpiTile" width="13.8rem">
+                <HBox justifyContent="SpaceBetween" alignItems="Center" class="kpiTileHeader">
+                    <Text text="Consumo (Real vs Plan)" class="kpiTileTitle"/>
+                </HBox>
+                <HBox alignItems="End" class="sapUiTinyMarginTop">
+                    <Text text="{KPIModel>/plannedVsActual}" class="kpiValue kpiValueAmber"/>
+                    <Text text="%" class="kpiUnit"/>
+                </HBox>
+            </VBox>
+
+            <VBox class="kpiTile" width="13.8rem">
+                <HBox justifyContent="SpaceBetween" alignItems="Center" class="kpiTileHeader">
+                    <Text text="Nivel Critico Tanques" class="kpiTileTitle"/>
+                </HBox>
+                <HBox alignItems="End" class="sapUiTinyMarginTop">
+                    <Text text="{KPIModel>/criticalTankCount}" class="kpiValue kpiValueRed"/>
+                    <Text text="Tanques" class="kpiUnit"/>
+                </HBox>
+            </VBox>
+
+            <VBox class="kpiTile sapUiSmallMarginEnd" width="13.8rem">
+                <HBox justifyContent="SpaceBetween" alignItems="Center" class="kpiTileHeader">
+                    <Text text="Calificacion Promedio Conductores" class="kpiTileTitle"/>
+                </HBox>
+                <HBox alignItems="End" class="sapUiTinyMarginTop">
+                    <Text text="{KPIModel>/driverRating}" class="kpiValue kpiValueGreen"/>
+                    <Text text="/100" class="kpiUnit"/>
+                </HBox>
+            </VBox>
+        </HBox>
+    </VBox>
+</core:FragmentDefinition>

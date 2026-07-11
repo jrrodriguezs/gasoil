@@ -1,0 +1,41 @@
+<core:FragmentDefinition
+    xmlns:microchart="sap.suite.ui.microchart"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+>
+    <VBox width="100%">
+        <HBox
+            width="100%"
+            renderType="Bare"
+        >
+            <microchart:ComparisonMicroChart
+                data="{providerData>/PerAlmacen}"
+                scale="L"
+                size="L"
+                width="50%"
+				class="sapUiSmallMarginBeginEnd"
+            >
+                <microchart:data>
+                    <microchart:ComparisonMicroChartData
+                        title="{providerData>proveedor}"
+                        value="{providerData>capacidad}"
+                    />
+                </microchart:data>
+            </microchart:ComparisonMicroChart>
+            <microchart:ComparisonMicroChart
+                data="{providerData>/PerTanques}"
+                scale="L"
+                size="L"
+                width="50%"
+				class="sapUiSmallMarginBeginEnd"
+            >
+                <microchart:data>
+                    <microchart:ComparisonMicroChartData
+                        title="{providerData>descripcion}"
+                        value="{providerData>nivel_actual}"
+                    />
+                </microchart:data>
+            </microchart:ComparisonMicroChart>
+        </HBox>
+    </VBox>
+</core:FragmentDefinition>

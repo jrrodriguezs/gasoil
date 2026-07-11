@@ -1,0 +1,4 @@
+code           , criticality
+Operativo      , 3
+Mantenimiento  , 2
+FueraDeServicio, 1

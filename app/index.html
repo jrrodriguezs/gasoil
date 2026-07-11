@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Administracion de Gasoil</title>
+    <script>
+        window["sap-ushell-config"] = {
+            defaultRenderer: "fiori2",
+            services: {
+                LaunchPage: {
+                    adapter: {
+                        config: {
+                            groups: [
+                                {
+                                    id: "grp-operaciones",
+                                    title: "Operaciones",
+                                    tiles: [
+                                        { id: "tile-viajes", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Orden de trabajo", icon: "sap-icon://order-status", targetURL: "#Viajes-manage" } },
+                                        { id: "tile-ordenes-carga", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Ordenes de Carga", icon: "sap-icon://synchronize", targetURL: "#OrdenesCarga-manage" } },
+                                        { id: "tile-surtidos", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Surtidos por Unidad", icon: "sap-icon://tools-opportunity", targetURL: "#Surtidos-manage" } },
+                                        { id: "tile-overview", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Vista resumen", icon: "sap-icon://overview-chart", targetURL: "#Overview-display" } }
+                                    ]
+                                },
+                                {
+                                    id: "grp-almacenamiento",
+                                    title: "Almacenamiento",
+                                    tiles: [
+                                        { id: "tile-almacenes", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Almacenes", icon: "sap-icon://home", targetURL: "#Almacenes-manage" } },
+                                        { id: "tile-tanques", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Tanques", icon: "sap-icon://measure", targetURL: "#Tanques-manage" } }
+                                    ]
+                                },
+                                {
+                                    id: "grp-configuracion",
+                                    title: "Configuración",
+                                    tiles: [
+                                        { id: "tile-proveedores", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Proveedores", icon: "sap-icon://supplier", targetURL: "#Proveedores-manage" } },
+                                        { id: "tile-rutas", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Rutas", icon: "sap-icon://map", targetURL: "#Rutas-manage" } },
+                                        { id: "tile-vehiculos", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Vehiculos", icon: "sap-icon://shipping-status", targetURL: "#Vehiculos-manage" } },
+                                        { id: "tile-choferes", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Choferes", icon: "sap-icon://employee", targetURL: "#Choferes-manage" } },
+                                        { id: "tile-motores", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Motores", icon: "sap-icon://syntax", targetURL: "#Motores-manage" } },
+                                        { id: "tile-transmisiones", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Transmisiones", icon: "sap-icon://process", targetURL: "#Transmisiones-manage" } },
+                                        { id: "tile-cajas", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Cajas", icon: "sap-icon://machine", targetURL: "#Cajas-manage" } },
+                                        { id: "tile-rubros", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Rubros", icon: "sap-icon://tag", targetURL: "#Rubros-manage" } }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                },
+                ClientSideTargetResolution: {
+                    adapter: {
+                        config: {
+                            inbounds: {
+                                "Almacenes-manage": {
+                                    semanticObject: "Almacenes", action: "manage", title: "Almacenes",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=com.tandem.almacenmaint",
+                                        url: "./almacen-maint/webapp"
+                                    }
+                                },
+                                "Vehiculos-manage": {
+                                    semanticObject: "Vehiculos", action: "manage", title: "Vehiculos",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=vehiculosmaint",
+                                        url: "./vehiculos-maint/webapp"
+                                    }
+                                },
+                                "Viajes-manage": {
+                                    semanticObject: "Viajes", action: "manage", title: "Viajes",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=viajesmaint",
+                                        url: "./viajes-maint/webapp"
+                                    }
+                                },
+                                "Choferes-manage": {
+                                    semanticObject: "Choferes", action: "manage", title: "Choferes",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=choferesmaint",
+                                        url: "./choferes-maint/webapp"
+                                    }
+                                },
+                                "Tanques-manage": {
+                                    semanticObject: "Tanques", action: "manage", title: "Tanques",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=tanquesmaint",
+                                        url: "./tanques-maint/webapp"
+                                    }
+                                },
+                                "Proveedores-manage": {
+                                    semanticObject: "Proveedores", action: "manage", title: "Proveedores",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=proveedormaint",
+                                        url: "./proveedor-maint/webapp"
+                                    }
+                                },
+                                "Rutas-manage": {
+                                    semanticObject: "Rutas", action: "manage", title: "Rutas",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=rutamaint",
+                                        url: "./ruta-maint/webapp"
+                                    }
+                                },
+                                "Motores-manage": {
+                                    semanticObject: "Motores", action: "manage", title: "Motores",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=motoresmaint",
+                                        url: "./motores-maint/webapp"
+                                    }
+                                },
+                                "Transmisiones-manage": {
+                                    semanticObject: "Transmisiones", action: "manage", title: "Transmisiones",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=transmisionmaint",
+                                        url: "./transmision-maint/webapp"
+                                    }
+                                },
+                                "Cajas-manage": {
+                                    semanticObject: "Cajas", action: "manage", title: "Cajas",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=cajamaint",
+                                        url: "./caja-maint/webapp"
+                                    }
+                                },
+                                "OrdenesCarga-manage": {
+                                    semanticObject: "OrdenesCarga", action: "manage", title: "Ordenes de Carga",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=ordenescargamaint",
+                                        url: "./ordenes-carga-maint/webapp"
+                                    }
+                                },
+                                "Surtidos-manage": {
+                                    semanticObject: "Surtidos", action: "manage", title: "Surtidos por Unidad",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=surtidosmaint",
+                                        url: "./surtidos-maint/webapp"
+                                    }
+                                },
+                                "Rubros-manage": {
+                                    semanticObject: "Rubros", action: "manage", title: "Rubros",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=rubrosmaint",
+                                        url: "./rubros-maint/webapp"
+                                    }
+                                },
+                                "Overview-display": {
+                                    semanticObject: "Overview", action: "display", title: "Overview",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=overviewpage",
+                                        url: "./overview-page/webapp"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                ,
+                NavTargetResolution: { config: { enableClientSideTargetResolution: true } }
+            }
+        };
+    </script>
+    <script id="sap-ui-bootstrap"
+            src="https://ui5.sap.com/test-resources/sap/ushell/bootstrap/sandbox.js"></script>
+    <script src="https://ui5.sap.com/resources/sap-ui-core.js"
+        data-sap-ui-libs="sap.m,sap.ushell,sap.fe.templates,sap.ovp,sap.viz" data-sap-ui-theme="sap_fiori"
+        data-sap-ui-compatVersion="edge" data-sap-ui-xx-componentPreload="off"
+        data-sap-ui-frameOptions="allow"></script>
+    <script>
+        sap.ui.getCore().attachInit(function () {
+            sap.ushell.Container.createRenderer("fiori2", true).then(function (oRenderer) {
+                oRenderer.placeAt("content");
+            });
+            // Create a MutationObserver to watch for changes in the DOM
+            var observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    if (mutation.addedNodes.length) {
+                        var iconElement = document.getElementById("shell-header-icon");
+                        if (iconElement) {
+                            iconElement.src = "https://agrocappture-file.sfo3.cdn.digitaloceanspaces.com/LOGO%20oil.jpeg";
+                        }
+                    }
+                });
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+
+        });
+    </script>
+</head>
+
+<body class="sapUiBody" id="content"></body>
+
+</html>

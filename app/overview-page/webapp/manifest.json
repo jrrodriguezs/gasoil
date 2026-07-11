@@ -1,0 +1,418 @@
+{
+  "_version": "1.76.0",
+  "sap.app": {
+    "id": "overviewpage",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:ovp",
+      "version": "1.19.6",
+      "toolsId": "03e9562b-4b1b-451d-9ca3-8f4a21b25bdd"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v2/config/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "2.0"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.142.7",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {},
+        "sap.ovp": {},
+        "sap.ui.rta": {},
+        "sap.ui.layout": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "overviewpage.i18n.i18n"
+        }
+      },
+      "mainModel": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/kpiCard.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {},
+      "routes": [],
+      "targets": {}
+    }
+  },
+  "sap.ovp": {
+    "globalFilterModel": "mainModel",
+    "globalFilterEntitySet": "Vehiculos",
+    "containerLayout": "resizable",
+    "enableLiveFilter": false,
+    "enableLazyRendering": true,
+    "considerAnalyticalParameters": false,
+    "chartSettings": {
+      "showDataLabel": true
+    },
+    "cards": {
+      "Card01": {
+        "template": "overviewpage.ext.KPICard",
+        "model": "mainModel",
+        "settings": {
+          "title": "CustomCard",
+          "defaultSpan": {
+            "cols": 5
+          }
+        }
+      },
+      "Card02": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.table",
+        "settings": {
+          "title": "Rendimiento por vehiculo",
+          "subTitle": " ",
+          "entitySet": "PerformacePerVehicle",
+          "tabs": [
+            {
+              "value": "Mayor rendimiento",
+              "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#Overview",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#Overview"
+            },
+            {
+              "value": "Menor rendimiento",
+              "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#Overview",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#OverviewAscending"
+            }
+          ]
+        }
+      },
+      "Card03": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.table",
+        "settings": {
+          "title": "Rendimiento por modelo",
+          "subTitle": " ",
+          "entitySet": "PerformanceByModel",
+          "tabs": [
+            {
+              "value": "Mayor rendimiento",
+              "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#ByModel",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#ByModel"
+            },
+            {
+              "value": "Menor rendimiento",
+              "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#ByModel",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#ByModelAscending"
+            }
+          ]
+        }
+      },
+      "Card04": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.list",
+        "settings": {
+          "defaultSpan": {
+            "cols": 4,
+            "rows": 5
+          },
+          "title": "Tanques",
+          "subTitle": "Cantidad de combustible en el tanque",
+          "sortBy": "porcentajeLlenado",
+          "sortOrder": "ascending",
+          "listType": "extended",
+          "listFlavor": "bar",
+          "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#PorcentajeLineItem",
+          "entitySet": "TankCapacity"
+        }
+      },
+      "Card05": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.table",
+        "settings": {
+          "defaultSpan": {
+            "cols": 2
+          },
+          "title": "Rendimiento por ruta",
+          "subTitle": " ",
+          "entitySet": "PerformancePerRoute",
+          "tabs": [
+            {
+              "value": "Mayor rendimiento",
+              "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#PerformancePerRoute",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#Descending"
+            },
+            {
+              "value": "Menor rendimiento",
+              "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#PerformancePerRoute",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#Ascending"
+            }
+          ]
+        }
+      },
+      "Card06": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.charts.analytical",
+        "settings": {
+          "defaultSpan": {
+            "cols": 2,
+            "rows": 4
+          },
+          "title": "Vehiculos y Tanques estado",
+          "subTitle": "Distribucion actual",
+          "valueSelectionInfo": "Selecciona el indicador",
+          "tabs": [
+            {
+              "value": "Vehiculos",
+              "entitySet": "VehiclePerStatus",
+              "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#EstadoVehiculoDonut",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#EstadoVehiculoDonut"
+            },
+            {
+              "value": "Tanques",
+              "entitySet": "TankPerStatus",
+              "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#EstadoTanqueDonut",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#EstadoTanqueDonut"
+            }
+          ]
+        }
+      },
+      "Card07": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.table",
+        "settings": {
+          "defaultSpan": {
+            "cols": 2,
+            "rows": 4
+          },
+          "title": "Rendimiento de vehiculos",
+          "subTitle": "Por motor, transmision, caja",
+          "tabs": [
+            {
+              "entitySet": "PerformacePerMotor",
+              "value": "Por motor mayor rendimiento",
+              "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#PerformancePerComponents",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#Descending"
+            },
+            {
+              "entitySet": "PerformacePerMotor",
+              "value": "Por motor menor rendimiento",
+              "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#PerformancePerComponents",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#Ascending"
+            },
+            {
+              "entitySet": "PerformacePerCaja",
+              "value": "Por caja mayor rendimiento",
+              "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#PerformancePerComponents",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#Descending"
+            },
+            {
+              "entitySet": "PerformacePerCaja",
+              "value": "Por caja menor rendimiento",
+              "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#PerformancePerComponents",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#Ascending"
+            },
+            {
+              "entitySet": "PerformacePerTransmision",
+              "value": "Por transmisión mayor rendimiento",
+              "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#PerformancePerComponents",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#Descending"
+            },
+            {
+              "entitySet": "PerformacePerTransmision",
+              "value": "Por transmisión menor rendimiento",
+              "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#PerformancePerComponents",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#Ascending"
+            }
+          ]
+        }
+      },
+      "Card08": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.table",
+        "settings": {
+          "defaultSpan": {
+            "cols": 2,
+            "rows": 4
+          },
+          "title": "Rendimiento por rubro",
+          "tabs": [
+            {
+              "value": "Mayor rendimiento",
+              "entitySet": "PerformancePerRubro",
+              "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#PerformancePerRubro",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#Descending"
+            },
+            {
+              "value": "Menor rendimiento",
+              "entitySet": "PerformancePerRubro",
+              "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#PerformancePerRubro",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#Ascending"
+            }
+          ]
+        }
+      },
+      "Card09": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.charts.analytical",
+        "settings": {
+          "defaultSpan": {
+            "cols": 4,
+            "rows": 10
+          },
+          "title": "Numero de Viajes",
+          "tabs": [
+            {
+              "value": "Por ruta",
+              "entitySet": "ViajesPorRutaSum",
+              "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#ViajesTotal",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#ViajesTotal",
+              "dataPointAnnotationPath": "com.sap.vocabularies.UI.v1.DataPoint#ViajesTotal",
+              "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification#ViajesTotal",
+              "selectionAnnotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#ViajesTotal"
+            },
+            {
+              "value": "Por mes",
+              "entitySet": "ViajesPorMes",
+              "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#ViajesMes",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#ViajesMes",
+              "dataPointAnnotationPath": "com.sap.vocabularies.UI.v1.DataPoint#ViajesMes",
+              "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification#ViajesMes",
+              "selectionAnnotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#ViajesMes"
+            },
+            {
+              "value": "Por año",
+              "entitySet": "ViajesPorAnio",
+              "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#ViajesAnio",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#ViajesAnio",
+              "dataPointAnnotationPath": "com.sap.vocabularies.UI.v1.DataPoint#ViajesAnio",
+              "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification#ViajesAnio",
+              "selectionAnnotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#ViajesAnio"
+            },
+             {
+              "value": "Por trimestre",
+              "entitySet": "ViajesPorTrimestre",
+              "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#ViajesTrimestre",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#ViajesTrimestre",
+              "dataPointAnnotationPath": "com.sap.vocabularies.UI.v1.DataPoint#ViajesTrimestre",
+              "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification#ViajesTrimestre",
+              "selectionAnnotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#ViajesTrimestre"
+            }
+          ]
+        }
+      },
+      "Card10":{
+        "model": "mainModel",
+        "template": "sap.ovp.cards.charts.analytical",
+        "settings": {
+          "defaultSpan": {
+            "cols": 4,
+            "rows": 10
+          },
+          "title": "Kilometros recorridos",
+          "tabs": [
+            {
+              "value": "Por ruta",
+              "entitySet": "ViajesPorRutaSum",
+              "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#KmTotal",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#KmTotal",
+              "dataPointAnnotationPath": "com.sap.vocabularies.UI.v1.DataPoint#KmTotal",
+              "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification#KmTotal",
+              "selectionAnnotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#KmTotal"
+            },
+            {
+              "value": "Por mes",
+              "entitySet": "ViajesPorMes",
+              "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#KmMes",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#KmMes",
+              "dataPointAnnotationPath": "com.sap.vocabularies.UI.v1.DataPoint#KmMes",
+              "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification#KmMes",
+              "selectionAnnotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#KmMes"
+            },
+            {
+              "value": "Por año",
+              "entitySet": "ViajesPorAnio",
+              "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#KmAnio",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#KmAnio",
+              "dataPointAnnotationPath": "com.sap.vocabularies.UI.v1.DataPoint#KmAnio",
+              "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification#KmAnio",
+              "selectionAnnotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#KmAnio"
+            },
+             {
+              "value": "Por trimestre",
+              "entitySet": "ViajesPorTrimestre",
+              "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#KmTrimestre",
+              "presentationAnnotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#KmTrimestre",
+              "dataPointAnnotationPath": "com.sap.vocabularies.UI.v1.DataPoint#KmTrimestre",
+              "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification#KmTrimestre",
+              "selectionAnnotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#KmTrimestre"
+            }
+          ]
+        }
+      },
+      "Card11": {
+        "template": "overviewpage.ext.ChoferesCard",
+        "model": "mainModel",
+        "settings": {
+          "title": "Choferes con mejor rendimiento",
+          "defaultSpan": {
+            "cols": 2
+          }
+        }
+      }
+    },
+    "globalFilterControlType": "MacroFilterBar"
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "analytical"
+  }
+}

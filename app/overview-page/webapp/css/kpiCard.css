@@ -1,0 +1,79 @@
+.kpiStripRoot {
+  width: 100%;
+}
+
+.kpiStripGrid {
+  gap: 0.55rem;
+}
+
+.kpiTile {
+  border: 1px solid #d8dadd;
+  border-radius: 0.45rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  padding: 0.65rem 0.75rem;
+  min-height: 6.25rem;
+}
+
+.kpiTileHeader {
+  min-height: 1.5rem;
+}
+
+.kpiTileTitle {
+  color: #4c5965;
+  font-size: 0.82rem;
+  line-height: 1.15rem;
+}
+
+.kpiTileIcon {
+  font-size: 0.95rem;
+}
+
+.kpiTileIconBlue {
+  color: #0a6ed1;
+}
+
+.kpiValue {
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 2rem;
+}
+
+.kpiUnit {
+  color: #5f6b75;
+  font-size: 0.92rem;
+  margin-left: 0.25rem;
+  margin-bottom: 0.13rem;
+}
+
+.kpiTrendIcon {
+  font-size: 0.7rem;
+  margin-right: 0.2rem;
+}
+
+.kpiDelta {
+  font-size: 0.75rem;
+}
+
+.kpiValueGreen {
+  color: #1f7a49;
+}
+
+.kpiValueRed {
+  color: #bb0000;
+}
+
+.kpiValueAmber {
+  color: #b36b00;
+}
+
+@media (max-width: 960px) {
+  .kpiTile {
+    width: calc(50% - 0.3rem) !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .kpiTile {
+    width: 100% !important;
+  }
+}

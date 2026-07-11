@@ -1,0 +1,195 @@
+{
+  "_version": "1.76.0",
+  "sap.app": {
+    "id": "com.tandem.almacenmaint",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.19.6",
+      "toolsId": "66ac1af0-7b3d-4276-a2a7-4dff1293b33e"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v4/config/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.0"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.145.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "com.tandem.almacenmaint.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "AlmacenesList",
+          "target": "AlmacenesList"
+        },
+        {
+          "pattern": "Almacenes({key}):?query:",
+          "name": "AlmacenesObjectPage",
+          "target": "AlmacenesObjectPage"
+        },
+        {
+          "pattern": "Almacenes({key})/tanques({key2}):?query:",
+          "name": "TanquesObjectPage",
+          "target": "TanquesObjectPage"
+        }
+      ],
+      "targets": {
+        "AlmacenesList": {
+          "type": "Component",
+          "id": "AlmacenesList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/Almacenes",
+              "variantManagement": "Page",
+              "navigation": {
+                "Almacenes": {
+                  "detail": {
+                    "route": "AlmacenesObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "AlmacenesObjectPage": {
+          "type": "Component",
+          "id": "AlmacenesObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/Almacenes",
+              "navigation": {
+                "tanques": {
+                  "detail": {
+                    "route": "TanquesObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "tanques/@com.sap.vocabularies.UI.v1.LineItem#SubTablaTanques": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable",
+                    "creationMode": "NewPage"
+                  }
+                }
+              },
+              "content": {
+                "body": {
+                  "sections": {
+                    "Proveedor": {
+                      "template": "com.tandem.almacenmaint.ext.fragment.Proveedor",
+                      "position": {
+                        "placement": "After",
+                        "anchor": "Identification"
+                      },
+                      "title": "Combustible por proveedor"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "TanquesObjectPage": {
+          "type": "Component",
+          "id": "TanquesObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/Almacenes/tanques"
+            }
+          }
+        }
+      }
+    },
+    "extends": {
+      "extensions": {
+        "sap.ui.controllerExtensions": {
+          "sap.fe.templates.ObjectPage.ObjectPageController#com.tandem.almacenmaint::AlmacenesObjectPage": {
+            "controllerName": "com.tandem.almacenmaint.ext.controller.AlmacenOP"
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  }
+}

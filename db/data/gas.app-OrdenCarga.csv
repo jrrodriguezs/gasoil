@@ -1,0 +1,3 @@
+ID,fechaCarga,fecha_carga,proveedor_ID,tanque_ID,placaCamionCisterna,nombreChoferCisterna,cedulaChoferCisterna,carga_real,placa_vehiculo,cedula_chofer,carga_facturada,observacion,createdAt,modifiedAt
+bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb,2026-02-12T10:00:00Z,2026-02-12,66666666-6666-6666-6666-666666666666,33333333-3333-3333-3333-333333333333,TNR001,Luis Mena,0911122233,500.00,ABC123,1234567890,520.00,Entrega parcial,2026-02-12T10:00:00Z,2026-02-12T10:00:00Z
+cccccccc-cccc-cccc-cccc-cccccccccccc,2026-02-14T10:10:00Z,2026-02-14,77777777-7777-7777-7777-777777777777,55555555-5555-5555-5555-555555555555,TNR002,Sofia Perez,0922233344,700.00,DEF456,2345678901,690.00,Sin novedad,2026-02-12T10:10:00Z,2026-02-12T10:10:00Z

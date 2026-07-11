@@ -1,0 +1,8 @@
+code    , name                      , descr                     , requiereUrea, requiereAceiteSintetico, sensibilidadGasoil
+NO_NORMA, Sin Norma / EPA 90         , Motor Mecanico de Bomba   , false       , false                  , BAJA
+EURO2   , Euro II / EPA 94           , Electronico Basico        , false       , false                  , BAJA
+EURO3   , Euro III / EPA 98          , Mack E-Tech / Vision      , false       , false                  , MEDIA
+EURO4   , Euro IV / EPA 04           , Motor con EGR (Humo)      , false       , true                   , ALTA
+EURO5   , Euro V / EPA 07            , Mack MP8 con Urea         , true        , true                   , MUY_ALTA
+EURO6   , Euro VI / EPA 10           , Importado Moderno         , true        , true                   , EXTREMA
+ANULADO , Sistema Anulado (Delete)   , Electronico Modificado    , false       , false                  , MEDIA
