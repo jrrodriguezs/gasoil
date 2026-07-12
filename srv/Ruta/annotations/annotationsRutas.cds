@@ -58,6 +58,15 @@ annotate ConfigService.Rutas with @(
 	destinosDescripcion @Common.FieldControl : #ReadOnly;
 };
 
+annotate ConfigService.Rutas with @UI.LineItem #RutaVH : [
+  { Value : descripcion, Label : 'Descripcion' },
+  { Value : distanciaKm, Label : 'Distancia (km)' }
+];
+
+annotate ConfigService.Rutas with @UI.PresentationVariant #RutaVH : {
+  Visualizations : ['@UI.LineItem#RutaVH']
+};
+
 annotate ConfigService.PuntoCoordenadas with @(
 	UI : {
 		LineItem : [

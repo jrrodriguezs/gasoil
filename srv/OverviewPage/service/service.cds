@@ -116,7 +116,7 @@ extend service ConfigService with {
     define view PerformacePerMotor as select from Vehiculos{
         key case 
             when motor.modelo is null then 'No especificado'
-            else motor.modelo
+            else motor.modelo.name
         end as modeloMotor : String,
         avg(promedioKm) as rendimiento: Decimal(10,2),
         max(promedioKm) as rendimientoMaximo: Decimal(10,2),

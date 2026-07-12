@@ -115,7 +115,7 @@ annotate ConfigService.SurtidosUnidad with @(
         {
           $Type : 'Common.ValueListParameterOut',
           LocalDataProperty : volumen_actual_vehiculo,
-          ValueListProperty : 'capacidadTanqueCombustible'
+          ValueListProperty : 'capacidadTotal'
         }
       ]
     }

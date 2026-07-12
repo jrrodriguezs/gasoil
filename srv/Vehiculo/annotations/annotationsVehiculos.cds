@@ -29,8 +29,8 @@ annotate ConfigService.Vehiculos with @(
     },
     HeaderFacets : [
       { $Type : 'UI.ReferenceURLFacet', Target : '@UI.HeaderInfo'},
-      { $Type : 'UI.ReferenceFacet'   , Target : '@UI.DataPoint#KmToatles' },
-      { $Type : 'UI.ReferenceFacet'   , Target : '@UI.DataPoint#LtrosTotales' },
+      { $Type : 'UI.ReferenceFacet'   , Target : '@UI.DataPoint#KmTotales' },
+      { $Type : 'UI.ReferenceFacet'   , Target : '@UI.DataPoint#LitrosTotales' },
       { $Type : 'UI.ReferenceFacet'   , Target : '@UI.DataPoint#RendimientoBase' },
       { $Type : 'UI.ReferenceFacet'   , Target : '@UI.DataPoint#RendimientoReal' },
       { $Type : 'UI.ReferenceFacet'   , Target : '@UI.DataPoint#CargaUtil' },
@@ -61,12 +61,12 @@ annotate ConfigService.Vehiculos with @(
       Criticality : estadodelvehiculo.criticality,
       Title : 'Estado de la unidad'
     },
-    DataPoint #KmToatles : {
+    DataPoint #KmTotales : {
       Value : kmTotales,
       Criticality : estadodelvehiculo.criticality,
       Title : 'Total de km recorridos'
     },
-    DataPoint #LtrosTotales : {
+    DataPoint #LitrosTotales : {
       Value : litrosTotales,
       Criticality : estadodelvehiculo.criticality,
       Title : 'Total litros consumidos'
@@ -262,7 +262,26 @@ annotate ConfigService.Vehiculos with @(
   rendimientoBase @Measures.Unit : measure;
   rendimientoReal @Measures.Unit : measure;
   cargautil @Measures.Unit : 't';
-  measure @Common.IsUnit;
+  measure @Common.IsUnit
+    @Common.ValueListWithFixedValues : true
+    @Common.ValueList : {
+      CollectionPath : 'MedicionesGaso',
+      Parameters : [
+        {
+          $Type : 'Common.ValueListParameterInOut',
+          LocalDataProperty : measure_code,
+          ValueListProperty : 'code'
+        },
+        {
+          $Type : 'Common.ValueListParameterDisplayOnly',
+          ValueListProperty : 'name'
+        },
+        {
+          $Type : 'Common.ValueListParameterDisplayOnly',
+          ValueListProperty : 'descr'
+        }
+      ]
+    };
   capacidadTotal @Common.FieldControl : #ReadOnly;
   viajes @Capabilities.InsertRestrictions : { Insertable : false };
 };

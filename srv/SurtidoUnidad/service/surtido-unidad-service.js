@@ -179,7 +179,7 @@ const beforeUpsertSurtido = async (req, surtidosEntity, options = {}) => {
         }
 
         const volumenPrevioVehiculo = Number(vehiculo.nivelActualCombustible || 0);
-        const capacidadVehiculo = Number(vehiculo.capacidadTanqueCombustible || 0);
+        const capacidadVehiculo = Number(vehiculo.capacidadTotal || 0);
         const volumenPosteriorVehiculo = cargaReal != null ? volumenPrevioVehiculo + cargaReal : volumenPrevioVehiculo;
         req.data.volumenPrevioVehiculo = volumenPrevioVehiculo;
         req.data.volumen_actual_vehiculo = volumenPosteriorVehiculo;

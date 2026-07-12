@@ -50,12 +50,12 @@ annotate ConfigService.Choferes with @(
       { Value : viaje.fecha, Label : 'Fecha' },
       { Value : viaje.ruta.descripcion, Label : 'Ruta' },
       { Value : viaje.ruta.distanciaKm, Label : 'Km Ruta'},
-      { Value : choferNombreCompleto, Label : 'Chofer' },
+      { Value : nombreCompleto, Label : 'Chofer' },
       { Value : viaje.horaSalida, Label : 'Hora salida' },
       { Value : viaje.horaLlegada, Label : 'Hora llegada estimada' },
       { Value : viaje.horaLlegadaReal, Label : 'Hora llegada real' },
-      { Value : litrosSalida, Label : 'Litros viaje' },
-      { Value : pesoCarga, Label : 'Peso carga' }
+      { Value : viaje.litrosSalida, Label : 'Litros viaje' },
+      { Value : viaje.pesoCarga, Label : 'Peso carga' }
     ],
     Identification : [
       { $Type : 'UI.DataField', Value : nombre, Label : 'Nombre' },

@@ -15,7 +15,7 @@ annotate ConfigService.Motores with @(
       Title : { Value : modelo },
       Description : { Value : serie }
     },
-    SelectionFields : [ modelo, serie, tipoEmision_code ],
+    SelectionFields : [ modelo_code, serie, tipoEmision_code ],
     FieldGroup #DatosMotor : {
       $Type : 'UI.FieldGroupType',
       Data : [
@@ -63,7 +63,8 @@ annotate ConfigService.Motores with @(
     ]
   }
 ) {
-  modelo @title : 'Modelo';
+  modelo @title : 'Modelo'
+    @Common.ValueListWithFixedValues : true;
   tipoEmision @title : 'Tipo de emision'
     @Common.ValueListWithFixedValues : true;
 

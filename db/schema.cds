@@ -14,4 +14,4 @@ using from './Viaje/viaje-schema';
 using from './Rubro/rubro-schema';
 using from './common';
 
-namespace my.logistica.combustible;
+namespace gas.app;

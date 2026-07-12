@@ -6,7 +6,8 @@ const handlers = [
     require("./Viaje/service/viaje-service"),
     require("./Chofer/service/chofer-service"),
     require("./Tanques/service/tanques-service"),
-    require("./Almacen/service/almacen-service")
+    require("./Vehiculo/service/vehiculo-service")
+    // Almacén opera por CDS nativo, no requiere handler custom
 ]
 
 class ConfigService extends cds.ApplicationService {

@@ -18,12 +18,13 @@ annotate call.Viajes with {
     pesoVuelta            @title: 'Peso de vuelta';
     rendimientoTeorico    @title: 'Rendimiento teórico'           @Measures.Unit: 'km/l';
     combustibleTeorico    @title: 'Combustible teórico'           @Measures.Unit: 'l';
+    estatus                 @readonly: true;
 
 };
 
 
 annotate call.Viajes with {
-    horaLlegadaReal      @Common.FieldControl : (estatus = 'Programado' ? 1 : 3 or estatus = 'Finalizado' ? 1 : 3);
+    horaLlegadaReal      @Common.FieldControl : ((estatus = 'Programado' or estatus = 'Finalizado') ? 1 : 3);
     pesoVuelta           @Common.FieldControl : (estatus = 'Programado' ? 1 : 3);
     litrosSalida         @Common.FieldControl : (estatus = 'Programado' ? 1 : 3);
     kilometrosRecorridos @Common.FieldControl : (estatus = 'Programado' ? 1 : 3);
@@ -181,6 +182,8 @@ annotate call.Viajes with @(
     }
 );
 
+annotate call.Viajes with @(Capabilities.InsertRestrictions #SubTablaChofer : { Insertable : false });
+
 annotate call.Viajes with @(UI: {
 
    
@@ -228,6 +231,12 @@ annotate call.Viajes with @(UI: {
         Criticality: #Information,
         Title      : 'Estado del viaje'
     },
+    DataPoint #costo            : {
+        $Type      : 'UI.DataPointType',
+        Value      : costoTeorico,
+        Criticality: #Information,
+        Title      : 'Costo'
+    },
 
     LineItem                    : [
         {
@@ -272,6 +281,33 @@ annotate call.Viajes with @(UI: {
             Value: pesoCarga,
             Label: 'Peso carga'
         }
+    ],
+    LineItem #SubTablaChofer    : [
+        { Value: fecha, Label: 'Fecha' },
+        { Value: ruta.descripcion, Label: 'Ruta' },
+        { Value: choferNombreCompleto, Label: 'Chofer' },
+        { Value: estatus, Label: 'Estatus' },
+        { Value: horaSalida, Label: 'Hora salida' },
+        { Value: horaLlegada, Label: 'Hora llegada estimada' },
+        { Value: horaLlegadaReal, Label: 'Hora llegada real' },
+        { Value: litrosSalida, Label: 'Litros viaje' },
+        { Value: pesoCarga, Label: 'Peso carga' }
+    ],
+    Identification              : [
+        { Value: fecha, Label: 'Fecha' },
+        { Value: ruta_ID, Label: 'Ruta' },
+        { Value: vehiculo_ID, Label: 'Vehiculo' },
+        { Value: chofer_ID, Label: 'Chofer' },
+        { Value: proveedor_ID, Label: 'Proveedor' },
+        { Value: estatus, Label: 'Estatus' },
+        { Value: horaSalida, Label: 'Hora salida' },
+        { Value: horaLlegada, Label: 'Hora llegada estimada' },
+        { Value: horaLlegadaReal, Label: 'Hora llegada real' },
+        { Value: litrosSalida, Label: 'Litros viaje' },
+        { Value: pesoCarga, Label: 'Peso carga' },
+        { Value: rubro_ID, Label: 'Rubro' },
+        { Value: pesoIda, Label: 'Peso ida' },
+        { Value: pesoVuelta, Label: 'Peso vuelta' }
     ],
     FieldGroup #DatosIniciales  : {
         $Type: 'UI.FieldGroupType',
