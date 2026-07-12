@@ -6,6 +6,29 @@ module.exports = async (srv) => {
   const { Viajes, Vehiculos, Motores, Rutas, Choferes, PreciosHistoricos } = cds.entities("ConfigService");
 
   srv.before("UPDATE", Viajes.drafts, async (req) => {
+    // ── Validación de transiciones de estado (FIX-026) ──
+    if (req.data.estatus !== undefined) {
+      const viajeActual = await SELECT.one.from(Viajes.drafts)
+        .where({ ID: req.data.ID })
+        .columns(viaje => { viaje.estatus; });
+
+      const estadoActual = viajeActual?.estatus;
+      const estadoNuevo  = req.data.estatus;
+
+      if (estadoActual && estadoActual !== estadoNuevo) {
+        const transicionesValidas = {
+          Programado: ['EnCurso', 'Finalizado', 'Cancelado'],
+          EnCurso:    ['Finalizado']
+        };
+
+        const permitidos = transicionesValidas[estadoActual] || [];
+        if (!permitidos.includes(estadoNuevo)) {
+          req.error(400, `Transición de estado inválida: ${estadoActual} → ${estadoNuevo}`);
+          return;
+        }
+      }
+    }
+
     try {
       const record = await SELECT.one.from(Viajes.drafts).where({ ID: req.data.ID })
         .columns(viaje => {
@@ -77,10 +100,30 @@ module.exports = async (srv) => {
 
   srv.on("changeStatus", Viajes, async (req) => {
     const { ID } = req.params[0];
-    console.log("Cambiando estado del viaje: ", ID);
+    const estadoNuevo = req.data.estatus;
 
-    await UPDATE(Viajes).set({ estatus: 'EnCurso' }).where({ ID: ID });
+    console.log("Cambiando estado del viaje: ", ID, "→", estadoNuevo);
 
+    const viaje = await SELECT.one.from(Viajes).where({ ID: ID }).columns(v => { v.estatus; });
+    if (!viaje) {
+      req.error(404, `Viaje ${ID} no encontrado`);
+      return;
+    }
+
+    const estadoActual = viaje.estatus;
+
+    const transicionesValidas = {
+      Programado: ['EnCurso', 'Finalizado', 'Cancelado'],
+      EnCurso:    ['Finalizado']
+    };
+
+    const permitidos = transicionesValidas[estadoActual] || [];
+    if (!permitidos.includes(estadoNuevo)) {
+      req.error(400, `Transición de estado inválida: ${estadoActual} → ${estadoNuevo}`);
+      return;
+    }
+
+    await UPDATE(Viajes).set({ estatus: estadoNuevo }).where({ ID: ID });
   });
 
 };

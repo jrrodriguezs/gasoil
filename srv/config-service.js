@@ -7,7 +7,8 @@ const handlers = [
     require("./Chofer/service/chofer-service"),
     require("./Tanques/service/tanques-service"),
     require("./Vehiculo/service/vehiculo-service"),
-    require("./Ruta/service/ruta-service")
+    require("./Ruta/service/ruta-service"),
+    require("./Telemetria/service/telemetria-service")
     // Almacén opera por CDS nativo, no requiere handler custom
 ]
 
