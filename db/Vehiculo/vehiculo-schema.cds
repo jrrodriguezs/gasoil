@@ -4,7 +4,7 @@ using { gas.app.Caja } from '../Caja/caja-schema';
 using { gas.app.Transmision } from '../Transmision/transmision-schema';
 using { gas.app.Viaje } from '../Viaje/viaje-schema';
 using { gas.app.Motor } from '../Motor/motor-schema';
-using { gas.common.VH_State, gas.common.EjesCamion, gas.common.NumeroTanques } from '../common';
+using { gas.common.VH_State, gas.common.EjesCamion, gas.common.NumeroTanques, gas.common.MedicionGaso } from '../common';
 using { cuid } from '@sap/cds/common';
 
 namespace gas.app;
@@ -37,6 +37,6 @@ entity Vehiculo : managed,  cuid, VehiculoRequired {
   transmision               : Association to Transmision;
   chofer                    : Association to Chofer;
   viajes                    : Association to many Viaje on viajes.vehiculo = $self;
-  measure                   : String default 'km/l';
+  measure                   : Association to MedicionGaso;
   nivelactual               : Decimal(10,2)
 };
