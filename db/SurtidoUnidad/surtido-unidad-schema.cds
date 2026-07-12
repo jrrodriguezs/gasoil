@@ -9,7 +9,6 @@ namespace gas.app;
 
 entity SurtidoUnidad : managed, cuid {
   @mandatory fechaCarga               : DateTime;
-  fecha_carga              : Date;
   @mandatory vehiculo                 : Association to Vehiculo;
   tanque                   : Association to Tanque;
   @mandatory carga_real               : Decimal(10,2);

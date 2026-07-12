@@ -9,7 +9,6 @@ namespace gas.app;
 
 entity OrdenCarga : managed, cuid {
   fechaCarga              : DateTime;
-  fecha_carga             : Date;
   proveedor               : Association to Proveedor;
   tanque                  : Association to Tanque;
   placaCamionCisterna     : String;

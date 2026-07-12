@@ -23,7 +23,6 @@ entity Vehiculo : managed,  cuid, VehiculoRequired {
   tipo_combustible          : String default 'Diesel';
   motor                     : Association to Motor;
   nivelActualCombustible     :  Decimal(10,2);
-  capacidadTanqueCombustible : Decimal(10,2);
   capacidadTanque2          : Decimal(10,2) default 0;
   @readonly
   capacidadTotal            : Decimal(10,2); // Calculada automaticamente
@@ -38,5 +37,4 @@ entity Vehiculo : managed,  cuid, VehiculoRequired {
   chofer                    : Association to Chofer;
   viajes                    : Association to many Viaje on viajes.vehiculo = $self;
   measure                   : Association to MedicionGaso;
-  nivelactual               : Decimal(10,2)
 };
