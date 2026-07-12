@@ -3,7 +3,7 @@ using {  gas.app.Vehiculo } from '../Vehiculo/vehiculo-schema';
 using { gas.app.Chofer } from '../Chofer/chofer-schema';
 using { Ruta } from '../Ruta/ruta-schema';
 using { gas.common.EstadoViaje } from '../common';
-using { Telemetria } from '../Telemetria/telemetria-schema';
+using { gas.app.Telemetria as Telemetria } from '../Telemetria/telemetria-schema';
 using { gas.app.Proveedor as Proveedor } from '../Proveedor/proveedor-schema';
 using { Rubros } from '../Rubro/rubro-schema';
 

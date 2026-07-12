@@ -1,5 +1,7 @@
 using { gas.app.Viaje } from '../Viaje/viaje-schema';
 
+namespace gas.app;
+
 entity Telemetria {
   key ID               : UUID;
   timestamp            : DateTime;
