@@ -14,17 +14,19 @@ annotate ConfigService.Cajas with @(
       Title : { Value : modeloCaja },
       Description : { Value : numeroVelocidades }
     },
-    SelectionFields : [ modeloCaja, numeroVelocidades ],
+    SelectionFields : [ modeloCaja, numeroVelocidades, estado_code ],
     LineItem : [
       { Value : modeloCaja, Label : 'Modelo caja', Importance : #High },
       { Value : numeroVelocidades, Label : 'Numero velocidades', Importance : #High },
-      { Value : factorTransmision, Label : 'Factor transmision', Importance : #Medium }
+      { Value : factorTransmision, Label : 'Factor transmision', Importance : #Medium },
+      { Value : estado_code, Label : 'Estado', Importance : #Medium }
     ],
     FieldGroup #Main : {
       Data : [
         { $Type : 'UI.DataField', Value : modeloCaja, Label : 'Modelo caja' },
         { $Type : 'UI.DataField', Value : numeroVelocidades, Label : 'Numero velocidades' },
-        { $Type : 'UI.DataField', Value : factorTransmision, Label : 'Factor transmision' }
+        { $Type : 'UI.DataField', Value : factorTransmision, Label : 'Factor transmision' },
+        { $Type : 'UI.DataField', Value : estado_code, Label : 'Estado' }
       ]
     },
     Facets : [
@@ -37,12 +39,26 @@ annotate ConfigService.Cajas with @(
     Identification : [
       { $Type : 'UI.DataField', Value : modeloCaja, Label : 'Modelo caja' },
       { $Type : 'UI.DataField', Value : numeroVelocidades, Label : 'Numero velocidades' },
-      { $Type : 'UI.DataField', Value : factorTransmision, Label : 'Factor transmision' }
+      { $Type : 'UI.DataField', Value : factorTransmision, Label : 'Factor transmision' },
+      { $Type : 'UI.DataField', Value : estado_code, Label : 'Estado' }
     ]
   }
 ) {
   ID @UI.Hidden;
   numeroVelocidades @assert : (case when numeroVelocidades is null or numeroVelocidades <= 0 or numeroVelocidades > 24 then 'El número de velocidades debe ser mayor que 0 y menor o igual a 24' end);
   factorTransmision @assert : (case when factorTransmision is null or factorTransmision <= 0 or factorTransmision > 10 then 'El factor de transmisión debe ser mayor que cero y menor o igual a diez' end);
-
+  estado @title : 'Estado'
+    @Common.ValueListWithFixedValues : true
+    @Common.Text : estado.code
+    @Common.TextArrangement : #TextOnly
+    @Common.ValueList : {
+      CollectionPath : 'VH_States',
+      Parameters : [
+        {
+          $Type : 'Common.ValueListParameterInOut',
+          LocalDataProperty : estado_code,
+          ValueListProperty : 'code'
+        }
+      ]
+    };
 }

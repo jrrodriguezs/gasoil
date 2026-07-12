@@ -14,13 +14,14 @@ annotate ConfigService.Transmisiones with @(
       Title : { Value : modeloDiferencial },
       Description : { Value : tipoEje }
     },
-    SelectionFields : [ modeloDiferencial, tipoEje ],
+    SelectionFields : [ modeloDiferencial, tipoEje, estado_code ],
     LineItem : [
       { Value : modeloDiferencial, Label : 'Modelo diferencial', Importance : #High },
       { Value : relacionTransmision, Label : 'Relacion transmision', Importance : #High },
       { Value : factorTransmision, Label : 'Factor transmision', Importance : #High },
       { Value : tipoEje, Label : 'Tipo de eje', Importance : #Medium },
-      { Value : capacidadCargaEje, Label : 'Capacidad carga eje', Importance : #Medium }
+      { Value : capacidadCargaEje, Label : 'Capacidad carga eje', Importance : #Medium },
+      { Value : estado_code, Label : 'Estado', Importance : #Medium }
     ],
     FieldGroup #Main : {
       Data : [
@@ -28,7 +29,8 @@ annotate ConfigService.Transmisiones with @(
         { $Type : 'UI.DataField', Value : relacionTransmision, Label : 'Relacion transmision' },
         { $Type : 'UI.DataField', Value : factorTransmision, Label : 'Factor transmision' },
         { $Type : 'UI.DataField', Value : tipoEje, Label : 'Tipo de eje' },
-        { $Type : 'UI.DataField', Value : capacidadCargaEje, Label : 'Capacidad carga eje' }
+        { $Type : 'UI.DataField', Value : capacidadCargaEje, Label : 'Capacidad carga eje' },
+        { $Type : 'UI.DataField', Value : estado_code, Label : 'Estado' }
       ]
     },
     Facets : [
@@ -43,9 +45,24 @@ annotate ConfigService.Transmisiones with @(
       { $Type : 'UI.DataField', Value : relacionTransmision, Label : 'Relacion transmision' },
       { $Type : 'UI.DataField', Value : factorTransmision, Label : 'Factor transmision' },
       { $Type : 'UI.DataField', Value : tipoEje, Label : 'Tipo de eje' },
-      { $Type : 'UI.DataField', Value : capacidadCargaEje, Label : 'Capacidad carga eje' }
+      { $Type : 'UI.DataField', Value : capacidadCargaEje, Label : 'Capacidad carga eje' },
+      { $Type : 'UI.DataField', Value : estado_code, Label : 'Estado' }
     ]
   }
 ) {
   ID @UI.Hidden;
+  estado @title : 'Estado'
+    @Common.ValueListWithFixedValues : true
+    @Common.Text : estado.code
+    @Common.TextArrangement : #TextOnly
+    @Common.ValueList : {
+      CollectionPath : 'VH_States',
+      Parameters : [
+        {
+          $Type : 'Common.ValueListParameterInOut',
+          LocalDataProperty : estado_code,
+          ValueListProperty : 'code'
+        }
+      ]
+    };
 };
