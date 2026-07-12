@@ -75,7 +75,9 @@
             },
 
             async getDriverRating(){
-                return 88;
+                const f = await fetch(this.SERVICE_URL + "PerformanceAvg");
+                const d = await f.json();
+                return d.value[0].rendimientoPromedioGeneral;
             },
 
             NumberFormat(value) {

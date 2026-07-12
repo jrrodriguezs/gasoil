@@ -36,14 +36,13 @@
 
             rendimientoFormat(value) {
                 if (value == "Malo"){
-                    return Math.random() < 0.5 ? 1 : 2;
+                    return 2;
                 }
                 if (value == "Regular"){
                     return 3
                 }
                 if (value == "Bueno"){
-                    //random choice between 4 and 5
-                    return Math.random() < 0.5 ? 4 : 5;
+                    return 5;
                 }
             }
 

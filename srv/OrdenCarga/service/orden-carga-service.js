@@ -11,7 +11,15 @@ module.exports = async (srv) => {
             ? to_tanques.reduce((total, tanque) => total + Number(tanque.quantity || 0), 0)
             : 0;
 
-        const ordenesActivas = await SELECT.from(OrdenesCarga).where({ isFirst: true });
+        let almacenId = req.data.almacen_ID;
+        if (!almacenId && req.event === 'UPDATE' && req.data.ID) {
+            const ordenExistente = await SELECT.one.from(OrdenesCarga).where({ ID: req.data.ID });
+            almacenId = ordenExistente?.almacen_ID;
+        }
+
+        const ordenesActivas = almacenId
+            ? await SELECT.from(OrdenesCarga).where({ isFirst: true, almacen_ID: almacenId })
+            : await SELECT.from(OrdenesCarga).where({ isFirst: true });
         if (hasTanquesDetalle && carga_real != null && Number(carga_real) !== totalTotanques) {
             req.error(400, `La carga real (${carga_real}) no coincide con la suma de las cantidades de los tanques (${totalTotanques})`);
         }
