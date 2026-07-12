@@ -17,32 +17,34 @@ sap.ui.define(['sap/ui/core/mvc/ControllerExtension', "sap/ui/model/json/JSONMod
 
 				},
 				onPageReady: async function () {
-					/** @type {sap.ui.model.odata.v4.ODataModel} */
-					let oView = this.getView();
-					// Get the binding context of the view
-					let oBindingContext = oView.getBindingContext();
-					let ID = oBindingContext.getProperty("ID");
-					const {PerAlmacen, PerTanques} = await this._getProviderData(ID);
-					const oJSONModel = new JSONModel({PerAlmacen, PerTanques});
-					console.log(oJSONModel.getData());
-					
-					this.getView().setModel(oJSONModel, "providerData");
+					try {
+						/** @type {sap.ui.model.odata.v4.ODataModel} */
+						let oView = this.getView();
+						// Get the binding context of the view
+						let oBindingContext = oView.getBindingContext();
+						let ID = oBindingContext.getProperty("ID");
+						const {PerAlmacen, PerTanques} = await this._getProviderData(ID);
+						const oJSONModel = new JSONModel({PerAlmacen, PerTanques});
+						console.log(oJSONModel.getData());
+						
+						this.getView().setModel(oJSONModel, "providerData");
+					} catch (error) {
+						console.error("Error en onPageReady:", error);
+						this.getView().setModel(new JSONModel({ PerAlmacen: null, PerTanques: null }), "providerData");
+					}
 				}
 			},
 
 			async _getProviderData(AlmacenID) {
 				try {
-					const response = await fetch(`/odata/v4/config/QuantityByAlmacen(AlmacenID=${AlmacenID})`, {
-						method: 'GET',
-						headers: {
-							'Content-Type': 'application/json'
-						}
-					});
-					const data = await response.json();
+					/** @type {sap.ui.model.odata.v4.ODataModel} */
+					var oModel = this.base.getExtensionAPI().getModel();
+					var oContextBinding = oModel.bindContext("/QuantityByAlmacen(AlmacenID=" + AlmacenID + ")");
+					var data = await oContextBinding.requestObject();
 					return data;
 				} catch (error) {
 					console.error('Error fetching provider data:', error);
-					throw error;
+					return { PerAlmacen: null, PerTanques: null };
 				}
 			}
 		});

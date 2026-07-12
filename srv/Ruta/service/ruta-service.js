@@ -16,6 +16,39 @@ module.exports = async (srv) => {
         await UPDATE(Rutas).set({ destinosCount: count }).where({ ID: rutaId });
     }
 
+    // ── Validación de coordenadas geográficas en PuntoCoordenada ──
+    srv.before("CREATE", PuntoCoordenadas, async (req) => {
+        const { latitud, longitud } = req.data;
+        if (latitud !== undefined && latitud !== null) {
+            const lat = parseFloat(latitud);
+            if (isNaN(lat) || lat < -90 || lat > 90) {
+                req.error(400, "La latitud debe estar entre -90 y 90.");
+            }
+        }
+        if (longitud !== undefined && longitud !== null) {
+            const lon = parseFloat(longitud);
+            if (isNaN(lon) || lon < -180 || lon > 180) {
+                req.error(400, "La longitud debe estar entre -180 y 180.");
+            }
+        }
+    });
+
+    srv.before("UPDATE", PuntoCoordenadas, async (req) => {
+        const { latitud, longitud } = req.data;
+        if (latitud !== undefined && latitud !== null) {
+            const lat = parseFloat(latitud);
+            if (isNaN(lat) || lat < -90 || lat > 90) {
+                req.error(400, "La latitud debe estar entre -90 y 90.");
+            }
+        }
+        if (longitud !== undefined && longitud !== null) {
+            const lon = parseFloat(longitud);
+            if (isNaN(lon) || lon < -180 || lon > 180) {
+                req.error(400, "La longitud debe estar entre -180 y 180.");
+            }
+        }
+    });
+
     // ── CREATE ──
     srv.after("CREATE", PuntoCoordenadas, async (_, req) => {
         const rutaId = req.data?.ruta_ID;
