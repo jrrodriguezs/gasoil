@@ -24,7 +24,7 @@ annotate call.Viajes with {
 
 
 annotate call.Viajes with {
-    horaLlegadaReal      @Common.FieldControl : (estatus = 'Programado' ? 1 : 3 or estatus = 'Finalizado' ? 1 : 3);
+    horaLlegadaReal      @Common.FieldControl : ((estatus = 'Programado' or estatus = 'Finalizado') ? 1 : 3);
     pesoVuelta           @Common.FieldControl : (estatus = 'Programado' ? 1 : 3);
     litrosSalida         @Common.FieldControl : (estatus = 'Programado' ? 1 : 3);
     kilometrosRecorridos @Common.FieldControl : (estatus = 'Programado' ? 1 : 3);
