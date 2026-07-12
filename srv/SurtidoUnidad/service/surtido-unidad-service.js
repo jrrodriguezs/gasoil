@@ -57,10 +57,15 @@ module.exports = async (srv) => {
         const ordenCargaId = req.data.ordenCarga_ID;
         if (!ordenCargaId) return;
 
-        let activeOrdenCarga = await SELECT.one.from(OrdenesCarga).where({ isFirst: true });
+        const almacenId = req.data.almacen_ID;
+        let activeOrdenCarga = almacenId
+            ? await SELECT.one.from(OrdenesCarga).where({ isFirst: true, almacen_ID: almacenId })
+            : await SELECT.one.from(OrdenesCarga).where({ isFirst: true });
         let ordenesEntity = OrdenesCarga;
         if (!activeOrdenCarga && OrdenesCarga.drafts) {
-            activeOrdenCarga = await SELECT.one.from(OrdenesCarga.drafts).where({ isFirst: true });
+            activeOrdenCarga = almacenId
+                ? await SELECT.one.from(OrdenesCarga.drafts).where({ isFirst: true, almacen_ID: almacenId })
+                : await SELECT.one.from(OrdenesCarga.drafts).where({ isFirst: true });
             if (activeOrdenCarga) ordenesEntity = OrdenesCarga.drafts;
         }
 
@@ -76,7 +81,8 @@ module.exports = async (srv) => {
         const nextOrdenCarga = await SELECT.one.from(ordenesEntity).where({
             fechaCarga: { '>=': activeOrdenCarga.fechaCarga },
             isFirst: { '!=': true },
-            ID: { '!=': activeOrdenCarga.ID }
+            ID: { '!=': activeOrdenCarga.ID },
+            almacen_ID: activeOrdenCarga.almacen_ID
         }).orderBy('fechaCarga').limit(1);
 
         if (nextOrdenCarga) {
@@ -130,9 +136,13 @@ const beforeUpsertSurtido = async (req, surtidosEntity, options = {}) => {
 
     let activeOrdenCarga = null;
     if (!isCargaExterna) {
-        activeOrdenCarga = await SELECT.one.from(OrdenesCarga).where({ isFirst: true });
+        activeOrdenCarga = almacenIdInput
+            ? await SELECT.one.from(OrdenesCarga).where({ isFirst: true, almacen_ID: almacenIdInput })
+            : await SELECT.one.from(OrdenesCarga).where({ isFirst: true });
         if (!activeOrdenCarga && OrdenesCarga.drafts) {
-            activeOrdenCarga = await SELECT.one.from(OrdenesCarga.drafts).where({ isFirst: true });
+            activeOrdenCarga = almacenIdInput
+                ? await SELECT.one.from(OrdenesCarga.drafts).where({ isFirst: true, almacen_ID: almacenIdInput })
+                : await SELECT.one.from(OrdenesCarga.drafts).where({ isFirst: true });
         }
     }
 
