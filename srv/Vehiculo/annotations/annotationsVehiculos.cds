@@ -262,7 +262,26 @@ annotate ConfigService.Vehiculos with @(
   rendimientoBase @Measures.Unit : measure;
   rendimientoReal @Measures.Unit : measure;
   cargautil @Measures.Unit : 't';
-  measure @Common.IsUnit;
+  measure @Common.IsUnit
+    @Common.ValueListWithFixedValues : true
+    @Common.ValueList : {
+      CollectionPath : 'MedicionesGaso',
+      Parameters : [
+        {
+          $Type : 'Common.ValueListParameterInOut',
+          LocalDataProperty : measure_code,
+          ValueListProperty : 'code'
+        },
+        {
+          $Type : 'Common.ValueListParameterDisplayOnly',
+          ValueListProperty : 'name'
+        },
+        {
+          $Type : 'Common.ValueListParameterDisplayOnly',
+          ValueListProperty : 'descr'
+        }
+      ]
+    };
   capacidadTotal @Common.FieldControl : #ReadOnly;
   viajes @Capabilities.InsertRestrictions : { Insertable : false };
 };

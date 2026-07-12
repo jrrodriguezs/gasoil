@@ -2,7 +2,7 @@ using { gas.app.Vehiculo } from '../../../db/Vehiculo/vehiculo-schema';
 using { gas.app.Vehiculo as DbVehiculo } from '../../../db/schema';
 using { gas.app.Viaje } from '../../../db/Viaje/viaje-schema';
 
-using { gas.common.ConfiguracionCamion, gas.common.EjesCamion, gas.common.NumeroTanques as DbNumeroTanques } from '../../../db/common';
+using { gas.common.ConfiguracionCamion, gas.common.EjesCamion, gas.common.NumeroTanques as DbNumeroTanques, gas.common.MedicionGaso } from '../../../db/common';
 using from '../../config-service';
 
 extend service ConfigService with {
@@ -20,6 +20,7 @@ extend service ConfigService with {
   entity ConfiguracionCamiones as projection on ConfiguracionCamion;
   entity EjesCamiones as projection on EjesCamion;
   entity NumeroTanquesVH as projection on DbNumeroTanques;
+  entity MedicionesGaso as projection on MedicionGaso;
 
   function VehiculoPorPlaca(placa: String) returns Vehiculos;
 }
