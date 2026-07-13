@@ -218,6 +218,49 @@ annotate ReportingService.HechosViaje with {
     }
   );
   rubro_ID @Common.Text: nombreRubro;
+
+  // Value helps sobre campos de texto solicitados
+  nombreChofer @Common.ValueList: {
+    CollectionPath: 'DimensionChofer',
+    Label: 'Choferes',
+    Parameters: [
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: nombreChofer, ValueListProperty: 'nombreCompleto' },
+      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'cedula' }
+    ]
+  };
+  modeloVehiculo @Common.ValueList: {
+    CollectionPath: 'DimensionVehiculo',
+    Label: 'Modelos de Vehículo',
+    Parameters: [
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: modeloVehiculo, ValueListProperty: 'modelo' },
+      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'placa' }
+    ]
+  };
+  descripcionRuta @Common.ValueList: {
+    CollectionPath: 'DimensionRuta',
+    Label: 'Rutas',
+    Parameters: [
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: descripcionRuta, ValueListProperty: 'descripcion' },
+      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'distanciaKm' }
+    ]
+  };
+  motor_ID @Common.ValueList: {
+    CollectionPath: 'Motores',
+    Label: 'Motores',
+    Parameters: [
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: motor_ID, ValueListProperty: 'ID' },
+      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'serie' },
+      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'cilindrada' }
+    ]
+  };
+  transmision_ID @Common.ValueList: {
+    CollectionPath: 'Transmisiones',
+    Label: 'Transmisiones',
+    Parameters: [
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: transmision_ID, ValueListProperty: 'ID' },
+      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'modeloDiferencial' }
+    ]
+  };
 };
 
 // Dimensiones: listas para value help
@@ -256,6 +299,24 @@ annotate ReportingService.DimensionAlmacen with @(UI: {
   LineItem: [
     { Value: almacen_ID, Label: 'ID' },
     { Value: nombreSede, Label: 'Sede' }
+  ]
+});
+
+annotate ReportingService.Motores with @(UI: {
+  LineItem: [
+    { Value: ID,          Label: 'ID' },
+    { Value: serie,       Label: 'Serie' },
+    { Value: cilindrada,  Label: 'Cilindrada' },
+    { Value: torqueMax,   Label: 'Torque Máx' }
+  ]
+});
+
+annotate ReportingService.Transmisiones with @(UI: {
+  LineItem: [
+    { Value: ID,                Label: 'ID' },
+    { Value: modeloDiferencial, Label: 'Modelo Diferencial' },
+    { Value: relacionTransmision, Label: 'Relación' },
+    { Value: tipoEje,           Label: 'Tipo de Eje' }
   ]
 });
 
