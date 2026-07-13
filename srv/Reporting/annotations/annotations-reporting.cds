@@ -263,15 +263,30 @@ annotate ReportingService.HechosViaje with {
   };
 };
 
-// Proyección dedicada a la app Reportes: solo los filtros solicitados
+// Proyección dedicada a la app Reportes: filtros con value helps y métricas clave
+annotate ReportingService.HechosViajeReportes with @Capabilities: {
+  FilterRestrictions: {
+    FilterExpressionRestrictions: [
+      { Property: fecha, AllowedExpressions: 'SingleRange' }
+    ]
+  }
+};
+
 annotate ReportingService.HechosViajeReportes with @(UI: {
   SelectionFields: [
+    // Dimensión tiempo
     fecha,
-    vehiculo_ID,
+
+    // Dimensiones con value help (tienen datos en los hechos)
     placaVehiculo,
+    modeloVehiculo,
+    nombreChofer,
     descripcionRuta,
-    nombreRubro,
+
+    // Estado y calidad
     estadoViaje,
+
+    // Métricas clave
     kilometrosRecorridos,
     litrosSalida,
     consumoRealTotal,
@@ -286,6 +301,41 @@ annotate ReportingService.HechosViajeReportes with @(UI: {
     pesoVuelta
   ]
 });
+
+annotate ReportingService.HechosViajeReportes with {
+  placaVehiculo @Common.ValueList: {
+    CollectionPath: 'DimensionVehiculo',
+    Label: 'Placas',
+    Parameters: [
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: placaVehiculo, ValueListProperty: 'placa' },
+      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'modelo' }
+    ]
+  };
+  modeloVehiculo @Common.ValueList: {
+    CollectionPath: 'DimensionVehiculo',
+    Label: 'Modelos de Vehículo',
+    Parameters: [
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: modeloVehiculo, ValueListProperty: 'modelo' },
+      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'placa' }
+    ]
+  };
+  nombreChofer @Common.ValueList: {
+    CollectionPath: 'DimensionChofer',
+    Label: 'Choferes',
+    Parameters: [
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: nombreChofer, ValueListProperty: 'nombreCompleto' },
+      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'cedula' }
+    ]
+  };
+  descripcionRuta @Common.ValueList: {
+    CollectionPath: 'DimensionRuta',
+    Label: 'Rutas',
+    Parameters: [
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: descripcionRuta, ValueListProperty: 'descripcion' },
+      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'distanciaKm' }
+    ]
+  };
+};
 
 // Dimensiones: listas para value help
 annotate ReportingService.DimensionVehiculo with @(UI: {
@@ -343,6 +393,7 @@ annotate ReportingService.Transmisiones with @(UI: {
     { Value: tipoEje,           Label: 'Tipo de Eje' }
   ]
 });
+
 
 annotate ReportingService.AggMensual with @(UI: {
   HeaderInfo: {

@@ -30,7 +30,7 @@ service ReportingService {
   @readonly
   entity DimensionAlmacen as projection on reporting.DimAlmacen;
 
-  // Entidades operacionales para value help de componentes
+  // Entidades operacionales para value help de componentes y rubros
   @readonly
   entity Motores as projection on Motor;
 
