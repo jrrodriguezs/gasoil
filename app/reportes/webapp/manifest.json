@@ -1,7 +1,7 @@
 {
   "_version": "1.60.0",
   "sap.app": {
-    "id": "rubrosmaint",
+    "id": "reportes",
     "type": "application",
     "i18n": {
       "bundleUrl": "i18n/i18n.properties",
@@ -16,12 +16,12 @@
     "resources": "resources.json",
     "sourceTemplate": {
       "id": "@sap/generator-fiori:lrop",
-      "version": "1.19.6",
-      "toolsId": "77040ec0-27ff-4529-b715-08fd4914d098"
+      "version": "1.21.0",
+      "toolsId": "reportes-template"
     },
     "dataSources": {
       "mainService": {
-        "uri": "/odata/v4/config/",
+        "uri": "/odata/v4/reporting/",
         "type": "OData",
         "settings": {
           "annotations": [],
@@ -64,7 +64,7 @@
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
         "settings": {
-          "bundleName": "rubrosmaint.i18n.i18n",
+          "bundleName": "reportes.i18n.i18n",
           "supportedLocales": ["es"],
           "fallbackLocale": "es"
         }
@@ -95,31 +95,19 @@
       "routes": [
         {
           "pattern": ":?query:",
-          "name": "RubrosList",
-          "target": "RubrosList"
-        },
-        {
-          "pattern": "Rubros({key}):?query:",
-          "name": "RubrosObjectPage",
-          "target": "RubrosObjectPage"
+          "name": "HechosViajeList",
+          "target": "HechosViajeList"
         }
       ],
       "targets": {
-        "RubrosList": {
+        "HechosViajeList": {
           "type": "Component",
-          "id": "RubrosList",
+          "id": "HechosViajeList",
           "name": "sap.fe.templates.ListReport",
           "options": {
             "settings": {
-              "contextPath": "/Rubros",
+              "contextPath": "/HechosViaje",
               "variantManagement": "Page",
-              "navigation": {
-                "Rubros": {
-                  "detail": {
-                    "route": "RubrosObjectPage"
-                  }
-                }
-              },
               "controlConfiguration": {
                 "@com.sap.vocabularies.UI.v1.LineItem": {
                   "tableSettings": {
@@ -129,17 +117,6 @@
               }
             }
           }
-        },
-        "RubrosObjectPage": {
-          "type": "Component",
-          "id": "RubrosObjectPage",
-          "name": "sap.fe.templates.ObjectPage",
-          "options": {
-            "settings": {
-              "editableHeaderContent": false,
-              "contextPath": "/Rubros"
-            }
-          }
         }
       }
     }
@@ -147,5 +124,10 @@
   "sap.fiori": {
     "registrationIds": [],
     "archeType": "transactional"
+  },
+  "sap.fe": {
+    "app": {
+      "enableLazyLoading": true
+    }
   }
 }

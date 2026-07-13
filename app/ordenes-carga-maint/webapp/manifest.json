@@ -3,7 +3,11 @@
   "sap.app": {
     "id": "ordenescargamaint",
     "type": "application",
-    "i18n": "i18n/i18n.properties",
+    "i18n": {
+      "bundleUrl": "i18n/i18n.properties",
+      "supportedLocales": ["es"],
+      "fallbackLocale": "es"
+    },
     "applicationVersion": {
       "version": "0.0.1"
     },
@@ -60,7 +64,9 @@
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
         "settings": {
-          "bundleName": "ordenescargamaint.i18n.i18n"
+          "bundleName": "ordenescargamaint.i18n.i18n",
+          "supportedLocales": ["es"],
+          "fallbackLocale": "es"
         }
       },
       "": {
@@ -74,7 +80,11 @@
       },
       "@i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
-        "uri": "i18n/i18n.properties"
+        "uri": "i18n/i18n.properties",
+        "settings": {
+          "supportedLocales": ["es"],
+          "fallbackLocale": "es"
+        }
       }
     },
     "resources": {

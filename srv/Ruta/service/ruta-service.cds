@@ -1,5 +1,4 @@
-using { Ruta, PuntoCoordenada } from '../../../db/Ruta/ruta-schema';
-using { Ruta as DbRuta, PuntoCoordenada as DbPuntoCoordenada } from '../../../db/schema';
+using { gas.app.Ruta as DbRuta, gas.app.PuntoCoordenada as DbPuntoCoordenada } from '../../../db/schema';
 using from '../../config-service';
 
 extend service ConfigService with {

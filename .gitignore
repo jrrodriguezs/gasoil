@@ -38,3 +38,9 @@ test/
 
 package.json
 .env
+
+# App build outputs
+app/**/dist/
+
+# Agent metadata
+.kimi/
