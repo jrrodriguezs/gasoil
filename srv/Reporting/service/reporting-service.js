@@ -4,6 +4,14 @@ const { sincronizarHechosViaje } = require('./reporting-sync');
 module.exports = cds.service.impl(async function () {
   const { ReportingService } = this.entities;
 
+  // Poblar hechos al iniciar el servicio para que los reportes tengan datos
+  try {
+    const resultado = await sincronizarHechosViaje();
+    console.log(`[ReportingService] Hechos sincronizados al inicio: ${resultado.sincronizados}`);
+  } catch (err) {
+    console.error('[ReportingService] Error sincronizando hechos al inicio:', err.message);
+  }
+
   this.on('sincronizar', async () => {
     return sincronizarHechosViaje();
   });

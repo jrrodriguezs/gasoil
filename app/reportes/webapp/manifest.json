@@ -90,15 +90,6 @@
     "resources": {
       "css": []
     },
-    "extends": {
-      "extensions": {
-        "sap.ui.controllerExtensions": {
-          "sap.fe.templates.ListReport.ListReportController#reportes::HechosViajeReportesList": {
-            "controllerName": "reportes.ext.controller.ListReportExt"
-          }
-        }
-      }
-    },
     "routing": {
       "config": {},
       "routes": [
