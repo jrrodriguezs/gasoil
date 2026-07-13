@@ -7,6 +7,10 @@ service ReportingService {
   @readonly
   entity HechosViaje as projection on reporting.HechoViaje;
 
+  // Proyección dedicada a la app Reportes con filtros reducidos
+  @readonly
+  entity HechosViajeReportes as projection on reporting.HechoViaje;
+
   // Dimensiones (para filtros y ValueHelp)
   @readonly
   entity DimensionTiempo as projection on reporting.DimTiempo;

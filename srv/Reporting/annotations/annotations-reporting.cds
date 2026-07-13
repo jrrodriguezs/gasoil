@@ -263,6 +263,30 @@ annotate ReportingService.HechosViaje with {
   };
 };
 
+// Proyección dedicada a la app Reportes: solo los filtros solicitados
+annotate ReportingService.HechosViajeReportes with @(UI: {
+  SelectionFields: [
+    fecha,
+    vehiculo_ID,
+    placaVehiculo,
+    descripcionRuta,
+    nombreRubro,
+    estadoViaje,
+    kilometrosRecorridos,
+    litrosSalida,
+    consumoRealTotal,
+    consumoTeoricoTotal,
+    costoTeorico,
+    costoPorKm,
+    rendimientoReal,
+    rendimientoTeorico,
+    kilometrosPorLitro,
+    pesoCarga,
+    pesoIda,
+    pesoVuelta
+  ]
+});
+
 // Dimensiones: listas para value help
 annotate ReportingService.DimensionVehiculo with @(UI: {
   LineItem: [
