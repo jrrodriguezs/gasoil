@@ -16,3 +16,4 @@ using from './SurtidoUnidad/service/surtido-unidad-service';
 using from './Rubro/service/service';
 using from './OverviewPage/service/service';
 using from './Reporting/service/reporting-service';
+using from './Maps/maps-service';

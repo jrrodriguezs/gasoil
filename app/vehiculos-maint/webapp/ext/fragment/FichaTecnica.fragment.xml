@@ -1,0 +1,271 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:uxap="sap.uxap"
+  xmlns:layout="sap.ui.layout"
+  xmlns:form="sap.ui.layout.form">
+
+  <Dialog
+    id="fichaTecnicaDialog"
+    title="{i18n>fichaTecnicaTitle}"
+    stretch="true"
+    horizontalScrolling="false"
+    verticalScrolling="false"
+    contentHeight="100%"
+    contentWidth="100%">
+
+    <uxap:ObjectPageLayout
+      id="fichaTecnicaOPL"
+      showTitleInHeaderContent="false"
+      showHeaderContent="false"
+      alwaysShowContentHeader="false"
+      enableLazyLoading="false"
+      useIconTabBar="true"
+      upperCaseAnchorBar="false">
+
+      <uxap:sections>
+        <!-- Datos del vehículo -->
+        <uxap:ObjectPageSection
+          title="{i18n>fichaDatosMaestros}"
+          titleUppercase="false"
+          showTitle="false">
+          <uxap:subSections>
+            <uxap:ObjectPageSubSection title="{i18n>fichaDatosMaestros}" titleUppercase="false" showTitle="false">
+              <uxap:blocks>
+                <form:SimpleForm
+                  layout="ColumnLayout"
+                  columnsM="2"
+                  columnsL="3"
+                  columnsXL="4"
+                  editable="false">
+                  <form:content>
+                    <core:Title text="Información general"/>
+                    <Label text="Placa"/>
+                    <Text text="{ficha>/vehiculo/placa}"/>
+                    <Label text="Modelo"/>
+                    <Text text="{ficha>/vehiculo/modelo}"/>
+                    <Label text="Estado"/>
+                    <Text text="{ficha>/vehiculo/estadodelvehiculo_code}"/>
+                    <Label text="Configuración"/>
+                    <Text text="{ficha>/vehiculo/configuraciondelremolque}"/>
+
+                    <core:Title text="Capacidades"/>
+                    <Label text="Ejes"/>
+                    <Text text="{ficha>/vehiculo/ejescamion_code}"/>
+                    <Label text="Número de tanques"/>
+                    <Text text="{ficha>/vehiculo/numeroTanques}"/>
+                    <Label text="Capacidad total"/>
+                    <Text text="{
+                      path: 'ficha>/vehiculo/capacidadTotal',
+                      type: 'sap.ui.model.type.Float',
+                      formatOptions: { minFractionDigits: 2, maxFractionDigits: 2 }
+                    } L"/>
+                    <Label text="Nivel actual de combustible"/>
+                    <Text text="{
+                      path: 'ficha>/vehiculo/nivelActualCombustible',
+                      type: 'sap.ui.model.type.Float',
+                      formatOptions: { minFractionDigits: 2, maxFractionDigits: 2 }
+                    } L"/>
+
+                    <core:Title text="Rendimiento"/>
+                    <Label text="Rendimiento base"/>
+                    <Text text="{
+                      path: 'ficha>/vehiculo/rendimientoBase',
+                      type: 'sap.ui.model.type.Float',
+                      formatOptions: { minFractionDigits: 2, maxFractionDigits: 2 }
+                    } {ficha>/vehiculo/measure_code}"/>
+                    <Label text="Rendimiento real"/>
+                    <Text text="{
+                      path: 'ficha>/indicadores/promedioKm',
+                      type: 'sap.ui.model.type.Float',
+                      formatOptions: { minFractionDigits: 2, maxFractionDigits: 2 }
+                    } {ficha>/vehiculo/measure_code}"/>
+                    <Label text="Carga útil"/>
+                    <Text text="{
+                      path: 'ficha>/vehiculo/cargautil',
+                      type: 'sap.ui.model.type.Float',
+                      formatOptions: { minFractionDigits: 2, maxFractionDigits: 2 }
+                    } t"/>
+                    <Label text="Km totales"/>
+                    <Text text="{
+                      path: 'ficha>/vehiculo/kmTotales',
+                      type: 'sap.ui.model.type.Float',
+                      formatOptions: { minFractionDigits: 2, maxFractionDigits: 2 }
+                    } km"/>
+                    <Label text="Litros totales"/>
+                    <Text text="{
+                      path: 'ficha>/vehiculo/litrosTotales',
+                      type: 'sap.ui.model.type.Float',
+                      formatOptions: { minFractionDigits: 2, maxFractionDigits: 2 }
+                    } L"/>
+                  </form:content>
+                </form:SimpleForm>
+              </uxap:blocks>
+            </uxap:ObjectPageSubSection>
+          </uxap:subSections>
+        </uxap:ObjectPageSection>
+
+        <!-- Datos del chofer -->
+        <uxap:ObjectPageSection
+          title="{i18n>fichaDatosChofer}"
+          titleUppercase="false"
+          showTitle="false">
+          <uxap:subSections>
+            <uxap:ObjectPageSubSection title="{i18n>fichaDatosChofer}" titleUppercase="false" showTitle="false">
+              <uxap:blocks>
+                <form:SimpleForm
+                  layout="ColumnLayout"
+                  columnsM="2"
+                  columnsL="2"
+                  columnsXL="3"
+                  editable="false">
+                  <form:content>
+                    <core:Title text="Chofer asignado"/>
+                    <Label text="Nombre"/>
+                    <Text text="{ficha>/chofer/nombre} {ficha>/chofer/apellido}"/>
+                    <Label text="Cédula"/>
+                    <Text text="{ficha>/chofer/cedula}"/>
+                    <Label text="Teléfono"/>
+                    <Text text="{ficha>/chofer/telefono}"/>
+                    <Label text="Dirección"/>
+                    <Text text="{ficha>/chofer/direccion}"/>
+                  </form:content>
+                </form:SimpleForm>
+              </uxap:blocks>
+            </uxap:ObjectPageSubSection>
+          </uxap:subSections>
+        </uxap:ObjectPageSection>
+
+        <!-- Indicadores de gestión -->
+        <uxap:ObjectPageSection
+          title="{i18n>fichaIndicadores}"
+          titleUppercase="false"
+          showTitle="false">
+          <uxap:subSections>
+            <uxap:ObjectPageSubSection title="{i18n>fichaIndicadores}" titleUppercase="false" showTitle="false">
+              <uxap:blocks>
+                <layout:HorizontalLayout allowWrapping="true">
+                  <VBox class="sapUiMediumMarginEnd sapUiMediumMarginBottom" alignItems="Center">
+                    <Text text="Eficiencia vs. base" class="sapUiTinyMarginBottom"/>
+                    <ObjectNumber
+                      number="{
+                        path: 'ficha>/indicadores/eficienciaPct',
+                        type: 'sap.ui.model.type.Float',
+                        formatOptions: { minFractionDigits: 2, maxFractionDigits: 2 }
+                      }"
+                      unit="%"/>
+                  </VBox>
+                  <VBox class="sapUiMediumMarginEnd sapUiMediumMarginBottom" alignItems="Center">
+                    <Text text="Promedio km/l" class="sapUiTinyMarginBottom"/>
+                    <ObjectNumber
+                      number="{
+                        path: 'ficha>/indicadores/promedioKm',
+                        type: 'sap.ui.model.type.Float',
+                        formatOptions: { minFractionDigits: 2, maxFractionDigits: 2 }
+                      }"
+                      unit="{ficha>/vehiculo/measure_code}"/>
+                  </VBox>
+                  <VBox class="sapUiMediumMarginEnd sapUiMediumMarginBottom" alignItems="Center">
+                    <Text text="Promedio consumo" class="sapUiTinyMarginBottom"/>
+                    <ObjectNumber
+                      number="{
+                        path: 'ficha>/indicadores/promedioConsumo',
+                        type: 'sap.ui.model.type.Float',
+                        formatOptions: { minFractionDigits: 2, maxFractionDigits: 2 }
+                      }"/>
+                  </VBox>
+                  <VBox class="sapUiMediumMarginEnd sapUiMediumMarginBottom" alignItems="Center">
+                    <Text text="Total viajes" class="sapUiTinyMarginBottom"/>
+                    <ObjectNumber number="{ficha>/indicadores/totalViajes}"/>
+                  </VBox>
+                </layout:HorizontalLayout>
+              </uxap:blocks>
+            </uxap:ObjectPageSubSection>
+          </uxap:subSections>
+        </uxap:ObjectPageSection>
+
+        <!-- Últimos viajes -->
+        <uxap:ObjectPageSection
+          title="{i18n>fichaUltimosViajes}"
+          titleUppercase="false"
+          showTitle="false">
+          <uxap:subSections>
+            <uxap:ObjectPageSubSection title="{i18n>fichaUltimosViajes}" titleUppercase="false" showTitle="false">
+              <uxap:blocks>
+                <Table
+                  id="fichaViajesTable"
+                  items="{ficha>/viajes}"
+                  growing="true"
+                  growingThreshold="20"
+                  sticky="ColumnHeaders,HeaderToolbar"
+                  width="100%">
+                  <columns>
+                    <Column><Text text="Fecha"/></Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Ruta"/></Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End"><Text text="Distancia (km)"/></Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End"><Text text="Litros salida"/></Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End"><Text text="Consumo"/></Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Estatus"/></Column>
+                  </columns>
+                  <items>
+                    <ColumnListItem>
+                      <cells>
+                        <Text text="{
+                          path: 'ficha>fecha',
+                          type: 'sap.ui.model.type.Date',
+                          formatOptions: {
+                            style: 'medium',
+                            source: { pattern: 'yyyy-MM-dd' }
+                          }
+                        }"/>
+                        <Text text="{ficha>nombreRuta}"/>
+                        <Text text="{
+                          path: 'ficha>kilometrosRecorridos',
+                          type: 'sap.ui.model.type.Float',
+                          formatOptions: { minFractionDigits: 2, maxFractionDigits: 2 }
+                        }"/>
+                        <Text text="{
+                          path: 'ficha>litrosSalida',
+                          type: 'sap.ui.model.type.Float',
+                          formatOptions: { minFractionDigits: 2, maxFractionDigits: 2 }
+                        }"/>
+                        <Text text="{
+                          path: 'ficha>consumoRealTotal',
+                          type: 'sap.ui.model.type.Float',
+                          formatOptions: { minFractionDigits: 2, maxFractionDigits: 2 }
+                        }"/>
+                        <Text text="{ficha>estatus}"/>
+                      </cells>
+                    </ColumnListItem>
+                  </items>
+                </Table>
+              </uxap:blocks>
+            </uxap:ObjectPageSubSection>
+          </uxap:subSections>
+        </uxap:ObjectPageSection>
+
+        <!-- Mapa de rutas -->
+        <uxap:ObjectPageSection
+          id="fichaSeccionMapa"
+          title="{i18n>fichaMapaRutas}"
+          titleUppercase="false"
+          showTitle="false">
+          <uxap:subSections>
+            <uxap:ObjectPageSubSection title="{i18n>fichaMapaRutas}" titleUppercase="false" showTitle="false">
+              <uxap:blocks>
+                <Panel id="fichaPanelMapa" height="500px" width="100%" expandable="false" expanded="true">
+                  <core:HTML id="fichaMapaRutas" content="&lt;div id='fichaMapaRutas' style='width:100%;height:100%;'&gt;&lt;/div&gt;" preferDOM="false"/>
+                </Panel>
+              </uxap:blocks>
+            </uxap:ObjectPageSubSection>
+          </uxap:subSections>
+        </uxap:ObjectPageSection>
+      </uxap:sections>
+    </uxap:ObjectPageLayout>
+
+    <buttons>
+      <Button text="{i18n>fichaExportarPDF}" type="Emphasized" press=".onExportarPDF"/>
+      <Button text="{i18n>fichaCerrar}" press=".onCerrarFichaTecnica"/>
+    </buttons>
+  </Dialog>
+</core:FragmentDefinition>

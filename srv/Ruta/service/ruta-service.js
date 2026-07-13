@@ -5,7 +5,34 @@ module.exports = async (srv) => {
     const { Rutas, PuntoCoordenadas } = cds.entities('ConfigService');
 
     /**
-     * Helper: recalcula destinosCount para una ruta dada
+     * Helper: concatena los nombres de los puntos de una ruta, ordenados.
+     */
+    async function nombresParadas(rutaId) {
+        if (!rutaId) return '';
+        const puntos = await SELECT.from(PuntoCoordenadas)
+            .where({ ruta_ID: rutaId })
+            .columns('descripcion', 'orden')
+            .orderBy('orden');
+        if (!puntos || puntos.length === 0) return '';
+        return puntos
+            .map(function (p) { return p.descripcion; })
+            .filter(function (d) { return d; })
+            .join(' → ');
+    }
+
+    // ── READ Rutas: enriquecer con nombres de paradas ──
+    srv.after("READ", Rutas, async (results, req) => {
+        if (!results) return;
+        const aRows = Array.isArray(results) ? results : [results];
+        for (const row of aRows) {
+            if (row && row.ID) {
+                row.nombresParadas = await nombresParadas(row.ID);
+            }
+        }
+    });
+
+    /**
+     * Helper: recalcula destinosCount y nombresParadas para una ruta dada
      */
     async function recalcularDestinos(rutaId) {
         if (!rutaId) return;
@@ -13,7 +40,8 @@ module.exports = async (srv) => {
             .where({ ruta_ID: rutaId })
             .columns('count(*) as count');
         const count = countResult?.count || 0;
-        await UPDATE(Rutas).set({ destinosCount: count }).where({ ID: rutaId });
+        const nombres = await nombresParadas(rutaId);
+        await UPDATE(Rutas).set({ destinosCount: count, nombresParadas: nombres }).where({ ID: rutaId });
     }
 
     // ── Validación de coordenadas geográficas en PuntoCoordenada ──

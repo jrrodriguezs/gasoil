@@ -1,0 +1,12 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:mvc="sap.ui.core.mvc">
+
+  <mvc:XMLView
+    id="mapaRutaView"
+    viewName="rutamaint.ext.view.MapaRutaView"
+    height="480px"
+    displayBlock="true"/>
+
+</core:FragmentDefinition>

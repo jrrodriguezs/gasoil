@@ -49,7 +49,8 @@
       "libs": {
         "sap.m": {},
         "sap.ui.core": {},
-        "sap.fe.templates": {}
+        "sap.fe.templates": {},
+        "sap.suite.ui.microchart": {}
       }
     },
     "contentDensities": {
@@ -127,7 +128,19 @@
           "options": {
             "settings": {
               "editableHeaderContent": false,
-              "contextPath": "/Tanques"
+              "contextPath": "/Tanques",
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.HeaderFacets": {
+                  "facets": {
+                    "TanqueNivelChart": {
+                      "type": "XMLFragment",
+                      "name": "tanquesmaint.ext.fragment.TanqueNivelChart",
+                      "title": "Nivel de combustible",
+                      "stashed": false
+                    }
+                  }
+                }
+              }
             }
           }
         }

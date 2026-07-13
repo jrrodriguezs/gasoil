@@ -24,6 +24,19 @@
           "odataVersion": "4.0"
         }
       }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "Viajes-manage": {
+          "semanticObject": "Viajes",
+          "action": "manage",
+          "title": "{{appTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
     }
   },
   "sap.ui": {
@@ -49,7 +62,9 @@
       "libs": {
         "sap.m": {},
         "sap.ui.core": {},
-        "sap.fe.templates": {}
+        "sap.ushell": {},
+        "sap.fe.templates": {},
+        "sap.suite.ui.microchart": {}
       }
     },
     "contentDensities": {
@@ -78,10 +93,22 @@
       }
     },
     "resources": {
-      "css": []
+      "css": [
+        {
+          "uri": "ext/css/mapaRuta.css"
+        }
+      ]
+    },
+    "rootView": {
+      "viewName": "sap.fe.core.rootView.NavContainer",
+      "type": "XML",
+      "async": true,
+      "id": "appRootView"
     },
     "routing": {
-      "config": {},
+      "config": {
+        "routerClass": "sap.m.routing.Router"
+      },
       "routes": [
         {
           "pattern": ":?query:",
@@ -111,6 +138,21 @@
                 }
               },
               "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.SelectionFields": {
+                  "filterFields": {
+                    "fecha": {
+                      "settings": {
+                        "operatorConfiguration": [
+                          {
+                            "path": "key",
+                            "equals": "DATERANGE",
+                            "exclude": false
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
                 "@com.sap.vocabularies.UI.v1.LineItem": {
                   "tableSettings": {
                     "type": "ResponsiveTable",
@@ -128,8 +170,58 @@
           "options": {
             "settings": {
               "editableHeaderContent": false,
-              "contextPath": "/Viajes"
+              "contextPath": "/Viajes",
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.HeaderFacets": {
+                  "facets": {
+                    "ChoferHeader": {
+                      "type": "XMLFragment",
+                      "name": "viajesmaint.ext.fragment.ChoferHeader",
+                      "title": "Chofer asignado",
+                      "stashed": false,
+                      "position": {
+                        "placement": "Before",
+                        "anchor": "VehiculoPlacaFacet"
+                      }
+                    },
+                    "HeaderCharts": {
+                      "type": "XMLFragment",
+                      "name": "viajesmaint.ext.fragment.HeaderCharts",
+                      "title": "Histórico de consumos",
+                      "stashed": false,
+                      "position": {
+                        "placement": "After",
+                        "anchor": "ConsumoPromedioRutaFacet"
+                      }
+                    }
+                  }
+                }
+              },
+              "content": {
+                "body": {
+                  "sections": {
+                    "MapaRuta": {
+                      "template": "viajesmaint.ext.fragment.MapaRuta",
+                      "position": {
+                        "placement": "After",
+                        "anchor": "InfoViajeFacet"
+                      },
+                      "title": "Mapa de ruta",
+                      "type": "XMLFragment"
+                    }
+                  }
+                }
+              }
             }
+          }
+        }
+      }
+    },
+    "extends": {
+      "extensions": {
+        "sap.ui.controllerExtensions": {
+          "sap.fe.templates.ObjectPage.ObjectPageController": {
+            "controllerName": "viajesmaint.ext.controller.ViajeObjectPage"
           }
         }
       }

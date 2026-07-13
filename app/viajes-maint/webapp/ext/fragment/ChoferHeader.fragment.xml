@@ -1,0 +1,23 @@
+<core:FragmentDefinition
+  xmlns:core="sap.ui.core"
+  xmlns="sap.m">
+  <HBox alignItems="Center" class="sapUiTinyMargin">
+    <Avatar
+      src="{choferImagen}"
+      displaySize="L"
+      displayShape="Circle"
+      fallbackIcon="sap-icon://person-placeholder"
+      imageFitType="Cover"/>
+    <VBox class="sapUiTinyMarginBegin">
+      <Title text="{choferNombreCompleto}" titleStyle="H5"/>
+      <HBox alignItems="Center">
+        <core:Icon src="sap-icon://contacts" class="sapUiTinyMarginEnd" color="Default"/>
+        <Text text="{choferCedula}"/>
+      </HBox>
+      <HBox alignItems="Center">
+        <core:Icon src="sap-icon://call" class="sapUiTinyMarginEnd" color="Default"/>
+        <Text text="{choferTelefono}"/>
+      </HBox>
+    </VBox>
+  </HBox>
+</core:FragmentDefinition>

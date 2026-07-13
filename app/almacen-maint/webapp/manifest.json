@@ -49,7 +49,8 @@
       "libs": {
         "sap.m": {},
         "sap.ui.core": {},
-        "sap.fe.templates": {}
+        "sap.fe.templates": {},
+        "sap.suite.ui.microchart": {}
       }
     },
     "contentDensities": {
@@ -157,7 +158,7 @@
                         "placement": "After",
                         "anchor": "Identification"
                       },
-                      "title": "Combustible por proveedor"
+                      "title": "Nivel de tanques"
                     }
                   }
                 }

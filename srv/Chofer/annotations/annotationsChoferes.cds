@@ -48,7 +48,7 @@ annotate ConfigService.Choferes with @(
     ],
      LineItem #HistoricoViajes : [
       { Value : viaje.fecha, Label : 'Fecha' },
-      { Value : viaje.ruta.descripcion, Label : 'Ruta' },
+      { Value : viaje.ruta.destino, Label : 'Ruta' },
       { Value : viaje.ruta.distanciaKm, Label : 'Km Ruta'},
       { Value : nombreCompleto, Label : 'Chofer' },
       { Value : viaje.horaSalida, Label : 'Hora salida' },

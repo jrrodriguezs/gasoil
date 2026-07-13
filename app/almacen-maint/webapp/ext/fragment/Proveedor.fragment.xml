@@ -4,38 +4,46 @@
     xmlns="sap.m"
 >
     <VBox width="100%">
-        <HBox
-            width="100%"
-            renderType="Bare"
-        >
-            <microchart:ComparisonMicroChart
-                data="{providerData>/PerAlmacen}"
-                scale="L"
-                size="L"
+        <HBox width="100%" renderType="Bare">
+            <VBox width="50%" class="sapUiSmallMarginBeginEnd">
+                <Title
+                    text="Volumen cargado últimos 30 días"
+                    level="H6"/>
+                <VBox id="volumeChartContainer" width="100%" height="150px"/>
+            </VBox>
+            <List
                 width="50%"
-				class="sapUiSmallMarginBeginEnd"
-            >
-                <microchart:data>
-                    <microchart:ComparisonMicroChartData
-                        title="{providerData>proveedor}"
-                        value="{providerData>capacidad}"
-                    />
-                </microchart:data>
-            </microchart:ComparisonMicroChart>
-            <microchart:ComparisonMicroChart
-                data="{providerData>/PerTanques}"
-                scale="L"
-                size="L"
-                width="50%"
-				class="sapUiSmallMarginBeginEnd"
-            >
-                <microchart:data>
-                    <microchart:ComparisonMicroChartData
-                        title="{providerData>descripcion}"
-                        value="{providerData>nivel_actual}"
-                    />
-                </microchart:data>
-            </microchart:ComparisonMicroChart>
+                class="sapUiSmallMarginBeginEnd"
+                items="{providerData>/PerTanques}"
+                showSeparators="None"
+                backgroundDesign="Transparent">
+                <CustomListItem>
+                    <VBox class="sapUiTinyMargin">
+                        <Title
+                            text="{providerData>descripcion}"
+                            level="H6"/>
+                        <microchart:BulletMicroChart
+                            scale="L"
+                            minValue="0"
+                            maxValue="{providerData>capacidadTotal}"
+                            targetValue="{providerData>nivel_minimo}"
+                            showActualValue="true"
+                            showTargetValue="true"
+                            showThresholds="true">
+                            <microchart:actual>
+                                <microchart:BulletMicroChartData
+                                    value="{providerData>nivel_actual}"
+                                    color="{providerData>color}"/>
+                            </microchart:actual>
+                            <microchart:thresholds>
+                                <microchart:BulletMicroChartData
+                                    value="{providerData>nivel_minimo}"
+                                    color="Error"/>
+                            </microchart:thresholds>
+                        </microchart:BulletMicroChart>
+                    </VBox>
+                </CustomListItem>
+            </List>
         </HBox>
     </VBox>
 </core:FragmentDefinition>

@@ -13,13 +13,25 @@ annotate ConfigService.Tanques with @(
       Title : { Value : descripcion },
       Description : { Value : capacidadTotal }
     },
+    DataPoint #NivelTanque : {
+      $Type : 'UI.DataPointType',
+      Title : 'Nivel de combustible',
+      Value : nivel_actual,
+      TargetValue : capacidadTotal,
+      Criticality : nivelCriticality,
+      Visualization : #BulletChart,
+      ValueFormat : {
+        $Type : 'UI.NumberFormat',
+        NumberOfFractionalDigits : 2
+      }
+    },
     LineItem : [
-      { Value : tipo_combustible, Label : 'Tipo combustible', Importance : #High },
-      { Value : capacidadTotal, Label : 'Capacidad total', Importance : #High },
-      { Value : nivel_actual, Label : 'Nivel actual', Importance : #Medium },
-      { Value : nivel_minimo, Label : 'Nivel minimo', Importance : #Medium },
-      { Value : ultimaFechaRecarga, Label : 'Ultima recarga', Importance : #Medium },
-      { Value : estadoTanque_code, Label : 'Estado del tanque', Importance : #Medium }
+      { $Type : 'UI.DataField', Value : tipo_combustible, Label : 'Tipo combustible', Importance : #High },
+      { $Type : 'UI.DataField', Value : capacidadTotal, Label : 'Capacidad total', Importance : #High },
+      { $Type : 'UI.DataField', Value : nivel_actual, Label : 'Nivel actual', Importance : #Medium },
+      { $Type : 'UI.DataField', Value : nivel_minimo, Label : 'Nivel minimo', Importance : #Medium },
+      { $Type : 'UI.DataField', Value : ultimaFechaRecarga, Label : 'Ultima recarga', Importance : #Medium },
+      { $Type : 'UI.DataField', Value : estadoTanque_code, Label : 'Estado del tanque', Importance : #Medium }
     ],
     Facets : [
       {
@@ -27,6 +39,12 @@ annotate ConfigService.Tanques with @(
         ID : 'DatosTanque',
         Label : 'Datos del tanque',
         Target : '@UI.Identification'
+      },
+      {
+        $Type : 'UI.ReferenceFacet',
+        ID : 'OrdenesCarga',
+        Label : 'Ordenes de carga',
+        Target : 'ordenesCarga/@UI.LineItem'
       }
     ],
     Identification : [

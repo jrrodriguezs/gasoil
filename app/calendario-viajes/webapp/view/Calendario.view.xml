@@ -1,0 +1,54 @@
+<mvc:View
+    controllerName="calendarioviajes.controller.Calendario"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:m="sap.m"
+    xmlns:unified="sap.ui.unified"
+    displayBlock="true"
+    height="100%">
+
+    <m:Page title="{i18n>title}" showNavButton="false">
+        <m:headerContent>
+            <m:HBox alignItems="Center" justifyContent="SpaceBetween" width="100%">
+                <m:SegmentedButton
+                    id="periodoSelector"
+                    selectedKey="mes"
+                    selectionChange="onPeriodoChange">
+                    <m:items>
+                        <m:SegmentedButtonItem key="semana" text="{i18n>semana}"/>
+                        <m:SegmentedButtonItem key="mes" text="{i18n>mes}"/>
+                        <m:SegmentedButtonItem key="trimestre" text="{i18n>trimestre}"/>
+                        <m:SegmentedButtonItem key="anio" text="{i18n>anio}"/>
+                    </m:items>
+                </m:SegmentedButton>
+                <m:Text id="rangoPeriodo" text=""/>
+            </m:HBox>
+        </m:headerContent>
+        <m:content>
+            <m:PlanningCalendar
+                id="planningCalendar"
+                startDateChange="onStartDateChange"
+                viewChange="onViewChange"
+                appointmentSelect="onAppointmentSelect"
+                showRowHeaders="true"
+                showWeekNumbers="true"
+                width="100%"
+                height="100%"
+                rows="{calendario>/rows}">
+                <m:rows>
+                    <m:PlanningCalendarRow
+                        title="{calendario>placa}"
+                        appointments="{path:'calendario>appointments', templateShareable:false}">
+                        <m:appointments>
+                            <unified:CalendarAppointment
+                                startDate="{calendario>startDate}"
+                                endDate="{calendario>endDate}"
+                                title="{calendario>title}"
+                                text="{calendario>text}"
+                                type="{calendario>type}"/>
+                        </m:appointments>
+                    </m:PlanningCalendarRow>
+                </m:rows>
+            </m:PlanningCalendar>
+        </m:content>
+    </m:Page>
+</mvc:View>

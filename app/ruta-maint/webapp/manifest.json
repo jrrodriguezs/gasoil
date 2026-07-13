@@ -78,7 +78,11 @@
       }
     },
     "resources": {
-      "css": []
+      "css": [
+        {
+          "uri": "ext/css/mapaRuta.css"
+        }
+      ]
     },
     "routing": {
       "config": {},
@@ -128,8 +132,32 @@
           "options": {
             "settings": {
               "editableHeaderContent": false,
-              "contextPath": "/Rutas"
+              "contextPath": "/Rutas",
+              "content": {
+                "body": {
+                  "sections": {
+                    "MapaRuta": {
+                      "template": "rutamaint.ext.fragment.MapaRuta",
+                      "position": {
+                        "placement": "After",
+                        "anchor": "PuntosRuta"
+                      },
+                      "title": "Mapa de ruta",
+                      "type": "XMLFragment"
+                    }
+                  }
+                }
+              }
             }
+          }
+        }
+      }
+    },
+    "extends": {
+      "extensions": {
+        "sap.ui.controllerExtensions": {
+          "sap.fe.templates.ObjectPage.ObjectPageController#rutamaint::RutasObjectPage": {
+            "controllerName": "rutamaint.ext.controller.RutaObjectPage"
           }
         }
       }

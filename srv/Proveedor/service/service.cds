@@ -23,6 +23,8 @@ extend service ConfigService with {
 	}
     type TanqueResult {
         descripcion: String;
+        capacidadTotal: Double;
+        nivel_minimo: Double;
         nivel_actual: Double;
     }
     
@@ -31,5 +33,15 @@ extend service ConfigService with {
         PerTanques: many TanqueResult;
     }
 
+    type VolumeHistoryItem {
+        fecha: Date;
+        capacidad: Double;
+    }
+
+    type VolumeHistoryResult {
+        items: many VolumeHistoryItem;
+    }
+
     function QuantityByAlmacen (AlmacenID: UUID) returns QuantityByAlmacenResult;
+    function AlmacenVolumeHistory (AlmacenID: UUID) returns VolumeHistoryResult;
 }

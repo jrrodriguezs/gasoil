@@ -5,6 +5,54 @@ const { calcularRendimiento } = require("../../utils/rendimientoCalculator");
 module.exports = async (srv) => {
   const { Viajes, Vehiculos, Motores, Rutas, Choferes, PreciosHistoricos } = cds.entities("ConfigService");
 
+  srv.after("READ", Viajes, async (viajes) => {
+    if (!viajes) return;
+    const aViajes = Array.isArray(viajes) ? viajes : [viajes];
+    for (const viaje of aViajes) {
+      if (!viaje) continue;
+      const sRutaId = viaje.ruta_ID;
+      const sVehiculoId = viaje.vehiculo_ID;
+      const sViajeId = viaje.ID;
+
+      if (sRutaId) {
+        // Viajes previos en la misma ruta (excluyendo el actual)
+        const rutaCount = await SELECT.one.from(Viajes)
+          .where({ ruta_ID: sRutaId, ID: { '!=': sViajeId } })
+          .columns('count(*) as total');
+        viaje.viajesEnRuta = rutaCount?.total || 0;
+
+        // Promedio de consumo de todos los viajes de la ruta
+        const avgResult = await SELECT.one.from(Viajes)
+          .where({ ruta_ID: sRutaId })
+          .columns('avg(consumoRealTotal) as avg');
+        viaje.consumoPromedioRuta = avgResult?.avg ? parseFloat(Number(avgResult.avg).toFixed(2)) : 0;
+
+        // Consumo del último viaje previo en la ruta
+        const ultimoRuta = await SELECT.one.from(Viajes)
+          .where({ ruta_ID: sRutaId, ID: { '!=': sViajeId } })
+          .orderBy({ fecha: 'desc' })
+          .columns('consumoRealTotal');
+        viaje.consumoUltimoViajeRuta = ultimoRuta?.consumoRealTotal || 0;
+
+        if (sVehiculoId) {
+          const vehRutaCount = await SELECT.one.from(Viajes)
+            .where({ ruta_ID: sRutaId, vehiculo_ID: sVehiculoId, ID: { '!=': sViajeId } })
+            .columns('count(*) as total');
+          viaje.viajesVehiculoEnRuta = vehRutaCount?.total || 0;
+
+          const ultimos = await SELECT.from(Viajes)
+            .where({ vehiculo_ID: sVehiculoId, ruta_ID: sRutaId, ID: { '!=': sViajeId } })
+            .orderBy({ fecha: 'desc' })
+            .limit(3)
+            .columns('consumoRealTotal');
+          viaje.consumoUltimo1 = ultimos[0]?.consumoRealTotal || 0;
+          viaje.consumoUltimo2 = ultimos[1]?.consumoRealTotal || 0;
+          viaje.consumoUltimo3 = ultimos[2]?.consumoRealTotal || 0;
+        }
+      }
+    }
+  });
+
   srv.before("UPDATE", Viajes.drafts, async (req) => {
     // ── Validación de transiciones de estado (FIX-026) ──
     if (req.data.estatus !== undefined) {

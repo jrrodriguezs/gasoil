@@ -19,6 +19,28 @@ annotate call.Viajes with {
     rendimientoTeorico    @title: 'Rendimiento teórico'           @Measures.Unit: 'km/l';
     combustibleTeorico    @title: 'Combustible teórico'           @Measures.Unit: 'l';
     estatus                 @readonly: true;
+    vehiculoPlaca         @title: 'Placa del vehículo';
+    vehiculoModelo        @title: 'Modelo del vehículo';
+    distanciaRuta         @title: 'Kilómetros de ruta'            @Measures.Unit: 'km';
+    distanciaTotalKm      @title: 'Kilómetros de ruta'                @Measures.Unit: 'km';
+    origen                @title: 'Origen del viaje';
+    latitudOrigen         @title: 'Latitud de origen';
+    longitudOrigen        @title: 'Longitud de origen';
+    destino               @title: 'Destino del viaje';
+    latitudDestino        @title: 'Latitud de destino';
+    longitudDestino       @title: 'Longitud de destino';
+    viajesEnRuta          @title: 'Viajes en esta ruta';
+    viajesVehiculoEnRuta  @title: 'Viajes de vehículo en ruta';
+    consumoUltimo1        @title: 'Consumo viaje -1'              @Measures.Unit: 'l';
+    consumoUltimo2        @title: 'Consumo viaje -2'              @Measures.Unit: 'l';
+    consumoUltimo3        @title: 'Consumo viaje -3'              @Measures.Unit: 'l';
+    consumoPromedioRuta   @title: 'Consumo promedio de la ruta'   @Measures.Unit: 'l';
+    consumoUltimoViajeRuta @title: 'Consumo último viaje de la ruta' @Measures.Unit: 'l';
+    vehiculoCapacidadTotal @title: 'Capacidad del vehículo'       @Measures.Unit: 'l';
+    vehiculoRendimientoBase @title: 'Rendimiento base del vehículo' @Measures.Unit: 'km/l';
+    choferCedula          @title: 'Cédula del chofer';
+    choferTelefono        @title: 'Teléfono del chofer';
+    choferImagen          @title: 'Foto del chofer' @UI.IsImageURL;
 
 };
 
@@ -80,7 +102,7 @@ annotate call.Viajes with {
     });
 
     ruta     @(Common: {
-        Text           : ruta.descripcion,
+        Text           : ruta.destino,
         TextArrangement: #TextOnly,
         ValueList      : {
             CollectionPath              : 'Rutas',
@@ -98,7 +120,7 @@ annotate call.Viajes with {
                 },
                 {
                     $Type            : 'Common.ValueListParameterDisplayOnly',
-                    ValueListProperty: 'descripcion'
+                    ValueListProperty: 'destino'
                 },
                 {
                     $Type            : 'Common.ValueListParameterDisplayOnly',
@@ -184,35 +206,172 @@ annotate call.Viajes with @(
 
 annotate call.Viajes with @(Capabilities.InsertRestrictions #SubTablaChofer : { Insertable : false });
 
-annotate call.Viajes with @(UI: {
-
-   
+annotate call.Viajes with @(
+    Capabilities.FilterRestrictions: {
+        FilterExpressionRestrictions: [
+            {
+                Property: 'fecha',
+                AllowedExpressions: 'SingleRange'
+            }
+        ]
+    },
+    UI: {
     SelectionFields  : [
-        estatus
+        fecha,
+        estatus,
+        ruta_ID,
+        chofer_ID,
+        vehiculo_ID,
+        vehiculoPlaca,
+        vehiculoModelo
     ],
     HeaderInfo                  : {
         TypeName      : 'Viaje',
         TypeNamePlural: 'Viajes',
-        Title         : {Value: ruta.descripcion},
+        Title         : {Value: ruta.destino},
         Description   : {Value: fecha}
     },
     
     HeaderFacets                : [
         {
             $Type : 'UI.ReferenceFacet',
-            Target: '@UI.DataPoint#rendimiento',
+            ID    : 'VehiculoPlacaFacet',
+            Target: '@UI.DataPoint#vehiculoPlaca',
         },
         {
             $Type : 'UI.ReferenceFacet',
-            Target: '@UI.DataPoint#combustible',
+            ID    : 'VehiculoModeloFacet',
+            Target: '@UI.DataPoint#vehiculoModelo',
         },
         {
             $Type : 'UI.ReferenceFacet',
+            ID    : 'VehiculoCapacidadFacet',
+            Target: '@UI.DataPoint#vehiculoCapacidadTotal',
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            ID    : 'VehiculoRendimientoFacet',
+            Target: '@UI.DataPoint#vehiculoRendimientoBase',
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            ID    : 'EstadoFacet',
             Target: '@UI.DataPoint#Estado',
         },
-
+        {
+            $Type : 'UI.ReferenceFacet',
+            ID    : 'DistanciaTotalFacet',
+            Target: '@UI.DataPoint#distanciaTotalKm',
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            ID    : 'ViajesEnRutaFacet',
+            Target: '@UI.DataPoint#viajesEnRuta',
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            ID    : 'ConsumoPromedioRutaFacet',
+            Target: '@UI.DataPoint#consumoPromedioRuta',
+        },
     ],
 
+    DataPoint #distanciaRuta    : {
+        $Type      : 'UI.DataPointType',
+        Value      : distanciaRuta,
+        Criticality: #Information,
+        Title      : 'Kilómetros de ruta'
+    },
+    DataPoint #distanciaTotalKm : {
+        $Type      : 'UI.DataPointType',
+        Value      : distanciaTotalKm,
+        Criticality: #Information,
+        Title      : 'Km de ruta'
+    },
+    DataPoint #vehiculoCapacidadTotal: {
+        $Type      : 'UI.DataPointType',
+        Value      : vehiculoCapacidadTotal,
+        Criticality: #Information,
+        Title      : 'Capacidad vehículo'
+    },
+    DataPoint #vehiculoRendimientoBase: {
+        $Type      : 'UI.DataPointType',
+        Value      : vehiculoRendimientoBase,
+        Criticality: #Information,
+        Title      : 'Rendimiento base'
+    },
+    DataPoint #choferCedula     : {
+        $Type      : 'UI.DataPointType',
+        Value      : choferCedula,
+        Criticality: #Information,
+        Title      : 'Cédula chofer'
+    },
+    DataPoint #choferTelefono   : {
+        $Type      : 'UI.DataPointType',
+        Value      : choferTelefono,
+        Criticality: #Information,
+        Title      : 'Teléfono chofer'
+    },
+    DataPoint #consumoPromedioRuta: {
+        $Type      : 'UI.DataPointType',
+        Value      : consumoPromedioRuta,
+        TargetValue: consumoUltimoViajeRuta,
+        Criticality: #Information,
+        Title      : 'Consumo promedio vs último'
+    },
+    DataPoint #combustibleTeorico: {
+        $Type      : 'UI.DataPointType',
+        Value      : combustibleTeorico,
+        Criticality: #Information,
+        Title      : 'Combustible necesario'
+    },
+    DataPoint #chofer           : {
+        $Type      : 'UI.DataPointType',
+        Value      : choferNombreCompleto,
+        Criticality: #Information,
+        Title      : 'Chofer asignado'
+    },
+    DataPoint #vehiculoPlaca    : {
+        $Type      : 'UI.DataPointType',
+        Value      : vehiculoPlaca,
+        Criticality: #Information,
+        Title      : 'Placa del vehículo'
+    },
+    DataPoint #vehiculoModelo   : {
+        $Type      : 'UI.DataPointType',
+        Value      : vehiculoModelo,
+        Criticality: #Information,
+        Title      : 'Modelo del vehículo'
+    },
+    DataPoint #viajesEnRuta     : {
+        $Type      : 'UI.DataPointType',
+        Value      : viajesEnRuta,
+        Criticality: #Information,
+        Title      : 'Viajes en esta ruta'
+    },
+    DataPoint #viajesVehiculoEnRuta : {
+        $Type      : 'UI.DataPointType',
+        Value      : viajesVehiculoEnRuta,
+        Criticality: #Information,
+        Title      : 'Viajes de vehículo en ruta'
+    },
+    DataPoint #consumoUltimo1   : {
+        $Type      : 'UI.DataPointType',
+        Value      : consumoUltimo1,
+        Criticality: #Information,
+        Title      : 'Consumo último viaje'
+    },
+    DataPoint #consumoUltimo2   : {
+        $Type      : 'UI.DataPointType',
+        Value      : consumoUltimo2,
+        Criticality: #Information,
+        Title      : 'Consumo 2do último viaje'
+    },
+    DataPoint #consumoUltimo3   : {
+        $Type      : 'UI.DataPointType',
+        Value      : consumoUltimo3,
+        Criticality: #Information,
+        Title      : 'Consumo 3er último viaje'
+    },
     DataPoint #rendimiento      : {
         $Type      : 'UI.DataPointType',
         Value      : rendimientoTeorico,
@@ -254,7 +413,7 @@ annotate call.Viajes with @(UI: {
             Label : 'Estatus del viaje'
         },
         {
-            Value: ruta.descripcion,
+            Value: ruta.destino,
             Label: 'Ruta'
         },
         {
@@ -284,7 +443,7 @@ annotate call.Viajes with @(UI: {
     ],
     LineItem #SubTablaChofer    : [
         { Value: fecha, Label: 'Fecha' },
-        { Value: ruta.descripcion, Label: 'Ruta' },
+        { Value: ruta.destino, Label: 'Ruta' },
         { Value: choferNombreCompleto, Label: 'Chofer' },
         { Value: estatus, Label: 'Estatus' },
         { Value: horaSalida, Label: 'Hora salida' },
@@ -307,7 +466,10 @@ annotate call.Viajes with @(UI: {
         { Value: pesoCarga, Label: 'Peso carga' },
         { Value: rubro_ID, Label: 'Rubro' },
         { Value: pesoIda, Label: 'Peso ida' },
-        { Value: pesoVuelta, Label: 'Peso vuelta' }
+        { Value: pesoVuelta, Label: 'Peso vuelta' },
+        { Value: origen, Label: 'Origen' },
+        { Value: latitudOrigen, Label: 'Latitud origen' },
+        { Value: longitudOrigen, Label: 'Longitud origen' }
     ],
     FieldGroup #DatosIniciales  : {
         $Type: 'UI.FieldGroupType',
@@ -370,6 +532,23 @@ annotate call.Viajes with @(UI: {
             }
         ]
     },
+    FieldGroup #OrigenViaje     : {
+        $Type: 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type: 'UI.DataField',
+                Value: origen,
+            },
+            {
+                $Type: 'UI.DataField',
+                Value: latitudOrigen,
+            },
+            {
+                $Type: 'UI.DataField',
+                Value: longitudOrigen,
+            }
+        ]
+    },
     Facets                      : [{
         $Type : 'UI.CollectionFacet',
         Label : 'Orden de Trabajo',
@@ -389,6 +568,11 @@ annotate call.Viajes with @(UI: {
                 $Type : 'UI.ReferenceFacet',
                 Target: '@UI.FieldGroup#DatosPesoConsumo',
                 Label : 'Datos de peso y consumo',
+            },
+            {
+                $Type : 'UI.ReferenceFacet',
+                Target: '@UI.FieldGroup#OrigenViaje',
+                Label : 'Origen del viaje',
             },
         ],
     }, ],

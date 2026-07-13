@@ -5,7 +5,7 @@ sap.ui.define([], function () {
     onExportarPDF: async function () {
       try {
         sap.ui.require(['sap/m/MessageToast'], function (MessageToast) {
-          MessageToast.show('Generando PDF, por favor espere...');
+          MessageToast.show('Generando PDF con los datos filtrados, por favor espere...');
         });
 
         await _cargarLibreriasPDF();
@@ -34,18 +34,67 @@ sap.ui.define([], function () {
   }
 
   function _cargarScript(sUrl) {
-    return new Promise(function (resolve, reject) {
-      var oScript = document.createElement('script');
-      oScript.src = sUrl;
-      oScript.onload = resolve;
-      oScript.onerror = function () {
-        reject(new Error('No se pudo cargar ' + sUrl));
-      };
-      document.head.appendChild(oScript);
-    });
+    return fetch(sUrl)
+      .then(function (oResponse) {
+        if (!oResponse.ok) {
+          throw new Error('HTTP ' + oResponse.status + ' en ' + sUrl);
+        }
+        return oResponse.text();
+      })
+      .then(function (sCode) {
+        // Forzar la rama global del UMD ocultando define/exports/module,
+        // de lo contrario SAPUI5/RequireJS lo registra como módulo AMD
+        // y no se expone window.jspdf.
+        var fnEjecutar = new Function('define', 'exports', 'module', sCode + '\n//# sourceURL=' + sUrl);
+        fnEjecutar(undefined, undefined, undefined);
+      });
   }
 
   async function _obtenerDatosReporte() {
+    var oTable = _encontrarTablaReporte();
+    if (oTable) {
+      try {
+        var oBinding = oTable.getRowBinding();
+        if (oBinding && typeof oBinding.requestContexts === 'function') {
+          var aDatos = [];
+          var iChunk = 1000;
+          var iFrom = 0;
+          var iTotal;
+          do {
+            var aContexts = await oBinding.requestContexts(iFrom, iChunk);
+            if (!aContexts || aContexts.length === 0) {
+              break;
+            }
+            aContexts.forEach(function (oContext) {
+              aDatos.push(oContext.getObject());
+            });
+            iFrom += aContexts.length;
+            iTotal = oBinding.getLength();
+          } while (!oBinding.isLengthFinal() || iFrom < iTotal);
+          return aDatos;
+        }
+      } catch (err) {
+        console.warn('No se pudieron obtener los datos filtrados del binding; se usan todos los datos:', err);
+      }
+    }
+    return _obtenerTodosLosDatos();
+  }
+
+  function _encontrarTablaReporte() {
+    var aTables = sap.ui.core.Element.registry.filter(function (el) {
+      return el.isA && el.isA('sap.ui.mdc.Table');
+    });
+    return aTables.find(function (oTable) {
+      var oBinding = oTable.getRowBinding();
+      if (!oBinding) {
+        return false;
+      }
+      var sPath = typeof oBinding.getPath === 'function' ? oBinding.getPath() : (oBinding.sPath || '');
+      return sPath.indexOf('HechosViajeReportes') !== -1;
+    }) || null;
+  }
+
+  async function _obtenerTodosLosDatos() {
     var sUrl = '/odata/v4/reporting/HechosViajeReportes?$select=fecha,placaVehiculo,nombreChofer,descripcionRuta,distanciaKm,litrosSalida,consumoRealTotal,consumoTeoricoTotal,rendimientoReal,rendimientoTeorico,costoTeorico,costoPorKm,estadoViaje&$top=5000';
     var oResponse = await fetch(sUrl, { headers: { 'Accept': 'application/json' } });
     if (!oResponse.ok) {

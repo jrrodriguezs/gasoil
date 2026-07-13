@@ -7,6 +7,19 @@
     <script>
         window["sap-ushell-config"] = {
             defaultRenderer: "fiori2",
+            renderers: {
+                fiori2: {
+                    componentData: {
+                        config: {
+                            search: "hidden",
+                            enableNotificationsUI: false,
+                            enableRecentActivity: false,
+                            enableRecentActivityLogging: false,
+                            enableUserDefaultParameters: false
+                        }
+                    }
+                }
+            },
             services: {
                 LaunchPage: {
                     adapter: {
@@ -20,7 +33,8 @@
                                         { id: "tile-ordenes-carga", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Ordenes de Carga", icon: "sap-icon://synchronize", targetURL: "#OrdenesCarga-manage" } },
                                         { id: "tile-surtidos", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Surtidos por Unidad", icon: "sap-icon://tools-opportunity", targetURL: "#Surtidos-manage" } },
                                         { id: "tile-overview", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Vista resumen", icon: "sap-icon://overview-chart", targetURL: "#Overview-display" } },
-                                        { id: "tile-reportes", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Reportes", icon: "sap-icon://bar-chart", targetURL: "#Reportes-display" } }
+                                        { id: "tile-reportes", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Reportes", icon: "sap-icon://bar-chart", targetURL: "#Reportes-display" } },
+                                        { id: "tile-calendario-viajes", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Calendario de Viajes", icon: "sap-icon://calendar", targetURL: "#CalendarioViajes-display" } }
                                     ]
                                 },
                                 {
@@ -53,6 +67,15 @@
                     adapter: {
                         config: {
                             inbounds: {
+                                "CalendarioViajes-display": {
+                                    semanticObject: "CalendarioViajes", action: "display", title: "Calendario de Viajes",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=calendarioviajes",
+                                        url: "./calendario-viajes/webapp"
+                                    }
+                                },
                                 "Almacenes-manage": {
                                     semanticObject: "Almacenes", action: "manage", title: "Almacenes",
                                     signature: { parameters: {}, additionalParameters: "allowed" },
@@ -193,13 +216,19 @@
                     }
                 }
                 ,
-                NavTargetResolution: { config: { enableClientSideTargetResolution: true } }
+                NavTargetResolution: { config: { enableClientSideTargetResolution: true } },
+                Personalization: {
+                    adapter: {
+                        module: "sap.ushell.adapters.local.PersonalizationAdapter",
+                        config: {}
+                    }
+                }
             }
         };
     </script>
     <script id="sap-ui-bootstrap"
-            src="https://ui5.sap.com/test-resources/sap/ushell/bootstrap/sandbox.js"></script>
-    <script src="https://ui5.sap.com/resources/sap-ui-core.js"
+            src="https://sapui5.hana.ondemand.com/1.145.0/test-resources/sap/ushell/bootstrap/sandbox.js"></script>
+    <script src="https://sapui5.hana.ondemand.com/1.145.0/resources/sap-ui-core.js"
         data-sap-ui-libs="sap.m,sap.ushell,sap.fe.templates,sap.ovp,sap.viz" data-sap-ui-theme="sap_fiori"
         data-sap-ui-compatVersion="edge" data-sap-ui-xx-componentPreload="off"
         data-sap-ui-frameOptions="allow"></script>

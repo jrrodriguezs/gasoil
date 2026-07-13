@@ -1,0 +1,16 @@
+{
+  "requires": {
+    "db": {
+      "kind": "postgres",
+      "impl": "@cap-js/postgres",
+      "credentials": {
+        "host": "localhost",
+        "port": 5441,
+        "user": "postgres",
+        "password": "gas-db",
+        "database": "gas-db"
+      }
+    },
+    "queue": false
+  }
+}

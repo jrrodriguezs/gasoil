@@ -1,6 +1,6 @@
 const cds = require("@sap/cds");
-const { SELECT, UPDATE } = require("@sap/cds/lib/ql/cds-ql");
-const { Tanques, SurtidosUnidad, TankXOrden, OrdenesCarga, Almacenes } = cds.entities('ConfigService');
+const { SELECT } = require("@sap/cds/lib/ql/cds-ql");
+const { Tanques, SurtidosUnidad, OrdenesCarga } = cds.entities('ConfigService');
 
 module.exports = async (srv) => {
 
@@ -24,8 +24,6 @@ module.exports = async (srv) => {
     });
     
     srv.before('UPDATE', Tanques, async (req) => {
-        const almacenId = req.data?.almacen_ID;
-
         if (req.data?.ID) {
             const existingTanque = await SELECT.one.from(Tanques).where({ ID: req.data.ID });
             req._oldAlmacenId = existingTanque?.almacen_ID;
@@ -43,34 +41,27 @@ module.exports = async (srv) => {
         if (nivelMinimo > 0 && nivelActual <= nivelMinimo) {
             req.warn(`Alerta: el tanque está en o por debajo del nivel mínimo (${nivelMinimo}). Nivel actual: ${nivelActual}`);
         }
-
-        let currentAlmacenId = data?.almacen_ID || req.data?.almacen_ID;
-        if (!currentAlmacenId) {
-            const entityId = data?.ID || req.data?.ID;
-            if (entityId) {
-                const tanque = await SELECT.one.from(Tanques).columns('almacen_ID').where({ ID: entityId });
-                currentAlmacenId = tanque?.almacen_ID;
-            }
-        }
     });
 
-    srv.before(['CREATE', 'UPDATE'], Tanques.drafts, async (req) => {
-        const almacenId = req.data?.almacen_ID;
+    if (Tanques.drafts) {
+        srv.before(['CREATE', 'UPDATE'], Tanques.drafts, async (req) => {
+            const almacenId = req.data?.almacen_ID;
 
-        if (req.event === 'CREATE' && !req.data?.codigo) {
-            const nextSequence = await getNextTanqueSequence(almacenId);
-            req.data.codigo = `tanque_${nextSequence}`;
-            if (!req.data?.descripcion) {
-                req.data.descripcion = `Tanque ${nextSequence}`;
+            if (req.event === 'CREATE' && !req.data?.codigo) {
+                const nextSequence = await getNextTanqueSequence(almacenId);
+                req.data.codigo = `tanque_${nextSequence}`;
+                if (!req.data?.descripcion) {
+                    req.data.descripcion = `Tanque ${nextSequence}`;
+                }
             }
-        }
 
-        if (req.event === 'CREATE' && !req.data?.estadoTanque_code) {
-            req.data.estadoTanque_code = 'Operativo';
-        }
+            if (req.event === 'CREATE' && !req.data?.estadoTanque_code) {
+                req.data.estadoTanque_code = 'Operativo';
+            }
 
-        await validateTanqueData(req, Tanques.drafts, { allowIncomplete: true });
-    });
+            await validateTanqueData(req, Tanques.drafts, { allowIncomplete: true });
+        });
+    }
 
     srv.before('DELETE', Tanques, async (req) => {
         const tanqueId = req.data?.ID;
@@ -88,9 +79,8 @@ module.exports = async (srv) => {
             return;
         }
 
-        const detalleOrdenRelacionado = TankXOrden
-            ? await SELECT.one.from(TankXOrden).where({ tanque_ID: tanqueId })
-            : null;
+        const detalleOrdenRelacionado = await SELECT.one.from(OrdenesCarga)
+            .where({ to_tanques: { tanque_ID: tanqueId } });
 
         if (detalleOrdenRelacionado) {
             req.error(400, 'No se puede eliminar el tanque porque está asociado a órdenes de carga (subtabla)');
@@ -160,12 +150,23 @@ const validateTanqueData = async (req, entity, options = {}) => {
             ? Number(existingTanque.nivel_minimo)
             : null;
 
+    const ultimaFechaRecarga = req.data.ultimaFechaRecarga != null
+        ? req.data.ultimaFechaRecarga
+        : existingTanque?.ultimaFechaRecarga != null
+            ? existingTanque.ultimaFechaRecarga
+            : null;
+
     if (allowIncomplete && capacidadTotal == null) {
         return;
     }
 
     if (capacidadTotal == null || capacidadTotal <= 0) {
         req.error(400, 'La capacidad total debe ser mayor a 0');
+        return;
+    }
+
+    if (!allowIncomplete && ultimaFechaRecarga == null) {
+        req.error(400, 'La última fecha de recarga es obligatoria');
         return;
     }
 

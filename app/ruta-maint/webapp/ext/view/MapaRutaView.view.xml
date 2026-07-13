@@ -1,0 +1,20 @@
+<mvc:View
+  controllerName="rutamaint.ext.controller.MapaRutaView"
+  displayBlock="true"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <VBox
+    id="mapaRutaWrapper"
+    height="480px"
+    width="100%"
+    renderType="Bare">
+    <core:HTML
+      id="mapaRutaHtml"
+      content="&lt;div id='mapa-ruta-container' class='mapa-ruta-mapa'&gt;&lt;/div&gt;"
+      preferDOM="true"
+      sanitizeContent="false"/>
+  </VBox>
+
+</mvc:View>

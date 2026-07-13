@@ -14,6 +14,12 @@ entity Viaje : managed {
   vehiculo            : Association to Vehiculo;
   chofer              : Association to Chofer;
   ruta                : Association to Ruta;
+  origen              : String; // Origen del viaje
+  latitudOrigen       : Decimal(9,6); // Latitud del origen
+  longitudOrigen      : Decimal(9,6); // Longitud del origen
+  destino             : String; // Destino del viaje
+  latitudDestino      : Decimal(9,6); // Latitud del destino
+  longitudDestino     : Decimal(9,6); // Longitud del destino
   fecha               : Date;
   horaSalida          : DateTime;
   horaLlegada         : DateTime;

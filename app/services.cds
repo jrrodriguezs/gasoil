@@ -22,3 +22,4 @@ using from './ordenes-carga-maint/annotations';
 
 using from './reporting-list/annotations';
 using from './reportes/annotations';
+using from './calendario-viajes/annotations';

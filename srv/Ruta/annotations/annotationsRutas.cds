@@ -18,17 +18,16 @@ annotate ConfigService.Rutas with @(
 		HeaderInfo : {
 			TypeName : 'Ruta',
 			TypeNamePlural : 'Rutas',
-			Title : { Value : descripcion },
-			Description : { Value : ID }
+			Title : { Value : destino },
+			Description : { Value : nombresParadas }
 		},
 		LineItem : [
-			{ Value : ID, Label : 'Codigo' },
-			{ Value : descripcion, Label : 'Descripcion' },
-			{ Value : distanciaKm, Label : 'Distancia (km)' },
+			{ Value : destino, Label : 'Paradas' },
+			{ Value : distanciaKm, Label : 'Distancia Total (Km)' },
 			{ Value : latitud, Label : 'Latitud' },
 			{ Value : longitud, Label : 'Longitud' },
 			{ Value : destinosCount, Label : 'Destinos' },
-			{ Value : destinosDescripcion, Label : 'Descripcion destinos' }
+			{ Value : nombresParadas, Label : 'Nombres de paradas' }
 		],
 		Facets : [
 			{
@@ -45,22 +44,23 @@ annotate ConfigService.Rutas with @(
 			}
 		],
 		Identification : [
-			{ Value : ID, Label : 'Codigo' },
-			{ Value : descripcion, Label : 'Descripcion' },
-			{ Value : distanciaKm, Label : 'Distancia (km)' },
+			{ Value : destino, Label : 'Paradas' },
+			{ Value : distanciaKm, Label : 'Distancia Total (Km)' },
 			{ Value : latitud, Label : 'Latitud' },
 			{ Value : longitud, Label : 'Longitud' },
 			{ Value : destinosCount, Label : 'Destinos' },
-			{ Value : destinosDescripcion, Label : 'Descripcion destinos' }
+			{ Value : nombresParadas, Label : 'Nombres de paradas' }
 		]
 	}
 ) {
 	destinosDescripcion @Common.FieldControl : #ReadOnly;
+	nombresParadas @Common.FieldControl : #ReadOnly;
+	nombresParadas @Core.Computed;
 };
 
 annotate ConfigService.Rutas with @UI.LineItem #RutaVH : [
-  { Value : descripcion, Label : 'Descripcion' },
-  { Value : distanciaKm, Label : 'Distancia (km)' }
+  { Value : destino, Label : 'Paradas' },
+  { Value : distanciaKm, Label : 'Distancia Total (Km)' }
 ];
 
 annotate ConfigService.Rutas with @UI.PresentationVariant #RutaVH : {
@@ -77,7 +77,7 @@ annotate ConfigService.PuntoCoordenadas with @(
 		],
 		PresentationVariant : {
 			SortOrder : [
-				{ Property : createdAt, Descending : false }
+				{ Property : orden, Descending : false }
 			]
 		}
 	}

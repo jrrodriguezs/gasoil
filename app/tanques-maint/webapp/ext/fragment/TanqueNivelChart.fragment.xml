@@ -1,0 +1,27 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:microchart="sap.suite.ui.microchart">
+    <VBox class="sapUiTinyMargin">
+        <microchart:BulletMicroChart
+            id="tanqueNivelChart"
+            width="18rem"
+            scale="L"
+            minValue="0"
+            maxValue="{capacidadTotal}"
+            targetValue="{nivel_minimo}"
+            showActualValue="true"
+            showTargetValue="true"
+            showThresholds="true">
+            <microchart:actual>
+                <microchart:BulletMicroChartData
+                    value="{nivel_actual}"
+                    color="{= ${nivelCriticality} === 1 ? 'Error' : (${nivelCriticality} === 2 ? 'Critical' : 'Good') }"/>
+            </microchart:actual>
+            <microchart:thresholds>
+                <microchart:BulletMicroChartData value="{nivel_minimo}" color="Error"/>
+            </microchart:thresholds>
+        </microchart:BulletMicroChart>
+        <Label text="Capacidad total: {capacidadTotal} L" design="Bold"/>
+    </VBox>
+</core:FragmentDefinition>

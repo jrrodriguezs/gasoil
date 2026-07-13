@@ -53,8 +53,8 @@ extend service ConfigService with {
     @odata.draft.enabled: false
     define view PerformancePerRoute as select from Viajes {
         avg(kilometrosPorLitro) as rendimientoPromedio: Decimal(10,2),
-        key ruta.descripcion as ruta:String
-    }group by ruta.descripcion;
+        key ruta.destino as ruta:String
+    }group by ruta.destino;
 
     @odata.draft.enabled: false
     define view PerformancePerWeight as select from Viajes {
@@ -178,7 +178,7 @@ extend service ConfigService with {
 
     @odata.draft.enabled: false
     define view ViajesPorRutaSum as select from Viajes {
-        key ruta.descripcion as ruta,
+        key ruta.destino as ruta,
         'Viajes' as unitViajes: String,
         'km' as unitKm: String,
         count(ID) as cantidadViajes: Integer,
@@ -187,21 +187,21 @@ extend service ConfigService with {
 
     @odata.draft.enabled: false
     define view ViajesPorRutaTiempo as select from Viajes {
-        key ruta.descripcion as ruta,
+        key ruta.destino as ruta,
         count(ID) as cantidadViajes: Integer,
         sum(ruta.distanciaKm) as distanciaRecorrida: Decimal(10,2),
         //campo para mes en que se realizo el viaje
-        SUBSTR(fecha, 1, 4) AS anio: String,
-        SUBSTR(fecha, 6, 2) AS mes2: String,
-    }
+        SUBSTR(cast(fecha as String), 1, 4) AS anio: String,
+        SUBSTR(cast(fecha as String), 6, 2) AS mes2: String,
+    } group by $self.ruta, $self.anio, $self.mes2;
 
     @odata.draft.enabled: false
     define view ViajesPorMes as select from Viajes{
         count(ID) as cantidadViajes: Integer,
         sum(ruta.distanciaKm) as distanciaRecorrida: Decimal(10,2),
         //campo para mes en que se realizo el viaje
-        SUBSTR(fecha, 1, 4) AS anio: Integer,
-        SUBSTR(fecha, 6, 2) AS mes: Integer,
+        SUBSTR(cast(fecha as String), 1, 4) AS anio: Integer,
+        SUBSTR(cast(fecha as String), 6, 2) AS mes: Integer,
         case
             when $self.mes = '01' then 'Enero'
             when $self.mes = '02' then 'Febrero'
@@ -217,30 +217,30 @@ extend service ConfigService with {
             else 'Diciembre'
         end as nombreMes: String,
         key ($self.anio || ' ' || $self.nombreMes) as fechaText: String
-    }group by $self.fechaText order by $self.anio, $self.mes;
+    } group by $self.anio, $self.mes, $self.nombreMes, $self.fechaText order by $self.anio, $self.mes;
 
     @odata.draft.enabled: false
     define view ViajesPorAnio as select from Viajes{
         count(ID) as cantidadViajes: Integer,
         sum(ruta.distanciaKm) as distanciaRecorrida: Decimal(10,2),
         //campo para año en que se realizo el viaje
-        key SUBSTR(fecha, 1, 4) AS anio: String
+        key SUBSTR(cast(fecha as String), 1, 4) AS anio: String
     } group by $self.anio order by $self.anio;
 
     @odata.draft.enabled: false
     define view ViajesPorTrimestre as select from Viajes{
         count(ID) as cantidadViajes: Integer,
         sum(ruta.distanciaKm) as distanciaRecorrida: Decimal(10,2),
-        SUBSTR(fecha, 1, 4) AS anio: String,
+        SUBSTR(cast(fecha as String), 1, 4) AS anio: String,
         //campo para trimestre en que se realizo el viaje
         case 
-            when SUBSTR(fecha, 6, 2) in ('01', '02', '03') then 'Q1'
-            when SUBSTR(fecha, 6, 2) in ('04', '05', '06') then 'Q2'
-            when SUBSTR(fecha, 6, 2) in ('07', '08', '09') then 'Q3'
+            when SUBSTR(cast(fecha as String), 6, 2) in ('01', '02', '03') then 'Q1'
+            when SUBSTR(cast(fecha as String), 6, 2) in ('04', '05', '06') then 'Q2'
+            when SUBSTR(cast(fecha as String), 6, 2) in ('07', '08', '09') then 'Q3'
             else 'Q4'
         end as trimestre: String,
         key ($self.anio || ' ' || $self.trimestre) as fechaText: String
-    } group by $self.fechaText order by $self.fechaText;
+    } group by $self.anio, $self.trimestre, $self.fechaText order by $self.fechaText;
     
 
     

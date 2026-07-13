@@ -1,0 +1,26 @@
+/* Estilos para la sección de mapa de ruta */
+.mapa-ruta-mapa {
+  width: 100% !important;
+  height: 480px !important;
+  min-height: 480px !important;
+  position: relative !important;
+  display: block !important;
+  overflow: hidden;
+  background-color: #f7f7f7;
+}
+
+.mapa-ruta-mapa > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Indicador visual mientras el mapa está vacío */
+.mapa-ruta-mapa:empty::after {
+  content: "Cargando mapa...";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #666;
+  font-size: 14px;
+}

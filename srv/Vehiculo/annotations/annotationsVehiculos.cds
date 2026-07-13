@@ -259,10 +259,10 @@ annotate ConfigService.Vehiculos with @(
         }
       ]
     };
-  rendimientoBase @Measures.Unit : measure;
-  rendimientoReal @Measures.Unit : measure;
+  rendimientoBase @Measures.Unit : measure_code;
+  rendimientoReal @Measures.Unit : measure_code;
   cargautil @Measures.Unit : 't';
-  measure @Common.IsUnit
+  measure_code @Common.IsUnit
     @Common.ValueListWithFixedValues : true
     @Common.ValueList : {
       CollectionPath : 'MedicionesGaso',
