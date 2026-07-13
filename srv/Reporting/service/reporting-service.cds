@@ -30,12 +30,25 @@ service ReportingService {
   @readonly
   entity DimensionAlmacen as projection on reporting.DimAlmacen;
 
-  // Entidades operacionales para value help de componentes y rubros
+  // Entidades operacionales para value help de componentes
   @readonly
   entity Motores as projection on Motor;
 
   @readonly
   entity Transmisiones as projection on Transmision;
+
+  // Vistas de valor único para value helps (evitan valores repetidos)
+  @readonly
+  entity PlacasVehiculo as projection on reporting.V_PlacasVehiculo;
+
+  @readonly
+  entity ModelosVehiculo as projection on reporting.V_ModelosVehiculo;
+
+  @readonly
+  entity NombresChofer as projection on reporting.V_NombresChofer;
+
+  @readonly
+  entity DescripcionesRuta as projection on reporting.V_DescripcionesRuta;
 
   // Vistas agregadas (para gráficos y KPIs)
   @readonly

@@ -263,7 +263,7 @@ annotate ReportingService.HechosViaje with {
   };
 };
 
-// Proyección dedicada a la app Reportes: filtros con value helps y métricas clave
+// Proyección dedicada a la app Reportes: filtros, etiquetas y value helps
 annotate ReportingService.HechosViajeReportes with @Capabilities: {
   FilterRestrictions: {
     FilterExpressionRestrictions: [
@@ -273,66 +273,111 @@ annotate ReportingService.HechosViajeReportes with @Capabilities: {
 };
 
 annotate ReportingService.HechosViajeReportes with @(UI: {
-  SelectionFields: [
-    // Dimensión tiempo
-    fecha,
+  HeaderInfo: {
+    TypeName: 'Viaje',
+    TypeNamePlural: 'Viajes',
+    Title: { Value: placaVehiculo },
+    Description: { Value: descripcionRuta }
+  },
 
-    // Dimensiones con value help (tienen datos en los hechos)
+  SelectionFields: [
+    fecha,
     placaVehiculo,
     modeloVehiculo,
     nombreChofer,
     descripcionRuta,
-
-    // Estado y calidad
+    motor_ID,
+    transmision_ID,
     estadoViaje,
-
-    // Métricas clave
     kilometrosRecorridos,
-    litrosSalida,
     consumoRealTotal,
     consumoTeoricoTotal,
-    costoTeorico,
-    costoPorKm,
     rendimientoReal,
     rendimientoTeorico,
     kilometrosPorLitro,
     pesoCarga,
     pesoIda,
     pesoVuelta
+  ],
+
+  LineItem: [
+    { Value: fecha,                Label: 'Fecha' },
+    { Value: placaVehiculo,        Label: 'Placa Vehículo' },
+    { Value: nombreChofer,         Label: 'Nombre Chofer' },
+    { Value: descripcionRuta,      Label: 'Descripción Ruta' },
+    { Value: distanciaKm,          Label: 'Distancia (km)' },
+    { Value: pesoTotal,            Label: 'Peso Total (kg)' },
+    { Value: litrosSalida,         Label: 'Litros Salida' },
+    { Value: consumoRealTotal,     Label: 'Consumo Real Total' },
+    { Value: consumoTeoricoTotal,  Label: 'Consumo Teórico Total' },
+    { Value: rendimientoReal,      Label: 'Rendimiento Real' },
+    { Value: rendimientoTeorico,   Label: 'Rendimiento Teórico' },
+    { Value: variacionRendimientoPct, Label: 'Variación (%)' },
+    { Value: costoTeorico,         Label: 'Costo Teórico' },
+    { Value: costoPorKm,           Label: 'Costo/km' },
+    { Value: estadoViaje,          Label: 'Estado Viaje' },
+    { Value: eficienciaCategoria,  Label: 'Eficiencia' }
   ]
 });
 
 annotate ReportingService.HechosViajeReportes with {
+  fecha              @Common.Label: 'Seleccione periodo';
+  placaVehiculo      @Common.Label: 'Placa Vehículo';
+  modeloVehiculo     @Common.Label: 'Modelo Vehículo';
+  nombreChofer       @Common.Label: 'Nombre Chofer';
+  descripcionRuta    @Common.Label: 'Descripción Ruta';
+  motor_ID           @Common.Label: 'Motor ID';
+  transmision_ID     @Common.Label: 'Transmisión ID';
+  estadoViaje        @Common.Label: 'Estado Viaje';
+  consumoRealTotal   @Common.Label: 'Consumo Real Total';
+  consumoTeoricoTotal @Common.Label: 'Consumo Teórico Total';
+  rendimientoReal    @Common.Label: 'Rendimiento Real';
+  rendimientoTeorico @Common.Label: 'Rendimiento Teórico';
+  pesoCarga          @Common.Label: 'Peso Carga';
+
   placaVehiculo @Common.ValueList: {
-    CollectionPath: 'DimensionVehiculo',
+    CollectionPath: 'PlacasVehiculo',
     Label: 'Placas',
     Parameters: [
-      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: placaVehiculo, ValueListProperty: 'placa' },
-      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'modelo' }
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: placaVehiculo, ValueListProperty: 'placaVehiculo' }
     ]
   };
   modeloVehiculo @Common.ValueList: {
-    CollectionPath: 'DimensionVehiculo',
+    CollectionPath: 'ModelosVehiculo',
     Label: 'Modelos de Vehículo',
     Parameters: [
-      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: modeloVehiculo, ValueListProperty: 'modelo' },
-      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'placa' }
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: modeloVehiculo, ValueListProperty: 'modeloVehiculo' }
     ]
   };
   nombreChofer @Common.ValueList: {
-    CollectionPath: 'DimensionChofer',
+    CollectionPath: 'NombresChofer',
     Label: 'Choferes',
     Parameters: [
-      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: nombreChofer, ValueListProperty: 'nombreCompleto' },
-      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'cedula' }
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: nombreChofer, ValueListProperty: 'nombreChofer' }
     ]
   };
   descripcionRuta @Common.ValueList: {
-    CollectionPath: 'DimensionRuta',
+    CollectionPath: 'DescripcionesRuta',
     Label: 'Rutas',
     Parameters: [
-      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: descripcionRuta, ValueListProperty: 'descripcion' },
-      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'distanciaKm' }
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: descripcionRuta, ValueListProperty: 'descripcionRuta' }
+    ]
+  };
+  motor_ID @Common.ValueList: {
+    CollectionPath: 'Motores',
+    Label: 'Motores',
+    Parameters: [
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: motor_ID, ValueListProperty: 'ID' },
+      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'serie' },
+      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'cilindrada' }
+    ]
+  };
+  transmision_ID @Common.ValueList: {
+    CollectionPath: 'Transmisiones',
+    Label: 'Transmisiones',
+    Parameters: [
+      { $Type: 'Common.ValueListParameterOut', LocalDataProperty: transmision_ID, ValueListProperty: 'ID' },
+      { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'modeloDiferencial' }
     ]
   };
 };
@@ -391,6 +436,34 @@ annotate ReportingService.Transmisiones with @(UI: {
     { Value: modeloDiferencial, Label: 'Modelo Diferencial' },
     { Value: relacionTransmision, Label: 'Relación' },
     { Value: tipoEje,           Label: 'Tipo de Eje' }
+  ]
+});
+
+annotate ReportingService.PlacasVehiculo with @(UI: {
+  LineItem: [
+    { Value: placaVehiculo, Label: 'Placa' },
+    { Value: cantidadViajes, Label: 'Viajes' }
+  ]
+});
+
+annotate ReportingService.ModelosVehiculo with @(UI: {
+  LineItem: [
+    { Value: modeloVehiculo, Label: 'Modelo' },
+    { Value: cantidadViajes, Label: 'Viajes' }
+  ]
+});
+
+annotate ReportingService.NombresChofer with @(UI: {
+  LineItem: [
+    { Value: nombreChofer, Label: 'Nombre' },
+    { Value: cantidadViajes, Label: 'Viajes' }
+  ]
+});
+
+annotate ReportingService.DescripcionesRuta with @(UI: {
+  LineItem: [
+    { Value: descripcionRuta, Label: 'Ruta' },
+    { Value: cantidadViajes, Label: 'Viajes' }
   ]
 });
 

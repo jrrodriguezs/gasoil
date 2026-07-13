@@ -57,3 +57,32 @@ entity V_AggPorComponente as select from HechoViaje {
       avg(costoPorKm)       as costoPromedioPorKm  : Decimal(10,2)
 } where esFinalizado = true
   group by motor_ID, transmision_ID, caja_ID, placaVehiculo;
+
+// Vistas para value helps sin valores repetidos
+@Analytics.dataCategory: #DIMENSION
+entity V_PlacasVehiculo as select from HechoViaje {
+  key placaVehiculo,
+      count(*) as cantidadViajes : Integer
+} where esFinalizado = true
+  group by placaVehiculo;
+
+@Analytics.dataCategory: #DIMENSION
+entity V_ModelosVehiculo as select from HechoViaje {
+  key modeloVehiculo,
+      count(*) as cantidadViajes : Integer
+} where esFinalizado = true
+  group by modeloVehiculo;
+
+@Analytics.dataCategory: #DIMENSION
+entity V_NombresChofer as select from HechoViaje {
+  key nombreChofer,
+      count(*) as cantidadViajes : Integer
+} where esFinalizado = true
+  group by nombreChofer;
+
+@Analytics.dataCategory: #DIMENSION
+entity V_DescripcionesRuta as select from HechoViaje {
+  key descripcionRuta,
+      count(*) as cantidadViajes : Integer
+} where esFinalizado = true
+  group by descripcionRuta;
