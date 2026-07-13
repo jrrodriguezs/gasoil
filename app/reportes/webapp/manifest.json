@@ -90,6 +90,15 @@
     "resources": {
       "css": []
     },
+    "extends": {
+      "extensions": {
+        "sap.ui.controllerExtensions": {
+          "sap.fe.templates.ListReport.ListReportController#reportes::HechosViajeReportesList": {
+            "controllerName": "reportes.ext.controller.ListReportExt"
+          }
+        }
+      }
+    },
     "routing": {
       "config": {},
       "routes": [
@@ -108,6 +117,7 @@
             "settings": {
               "contextPath": "/HechosViajeReportes",
               "variantManagement": "Page",
+              "initialLoad": true,
               "controlConfiguration": {
                 "@com.sap.vocabularies.UI.v1.LineItem": {
                   "tableSettings": {
