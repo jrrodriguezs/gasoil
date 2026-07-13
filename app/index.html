@@ -19,7 +19,8 @@
                                         { id: "tile-viajes", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Orden de trabajo", icon: "sap-icon://order-status", targetURL: "#Viajes-manage" } },
                                         { id: "tile-ordenes-carga", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Ordenes de Carga", icon: "sap-icon://synchronize", targetURL: "#OrdenesCarga-manage" } },
                                         { id: "tile-surtidos", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Surtidos por Unidad", icon: "sap-icon://tools-opportunity", targetURL: "#Surtidos-manage" } },
-                                        { id: "tile-overview", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Vista resumen", icon: "sap-icon://overview-chart", targetURL: "#Overview-display" } }
+                                        { id: "tile-overview", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Vista resumen", icon: "sap-icon://overview-chart", targetURL: "#Overview-display" } },
+                                        { id: "tile-reportes", tileType: "sap.ushell.ui.tile.StaticTile", properties: { title: "Reportes", icon: "sap-icon://bar-chart", targetURL: "#Reportes-display" } }
                                     ]
                                 },
                                 {
@@ -176,6 +177,15 @@
                                         applicationType: "SAPUI5",
                                         additionalInformation: "SAPUI5.Component=overviewpage",
                                         url: "./overview-page/webapp"
+                                    }
+                                },
+                                "Reportes-display": {
+                                    semanticObject: "Reportes", action: "display", title: "Reportes",
+                                    signature: { parameters: {}, additionalParameters: "allowed" },
+                                    resolutionResult: {
+                                        applicationType: "SAPUI5",
+                                        additionalInformation: "SAPUI5.Component=reportes",
+                                        url: "./reportes/webapp"
                                     }
                                 }
                             }
