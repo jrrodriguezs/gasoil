@@ -1,5 +1,13 @@
 using { ReportingService } from '../service/reporting-service';
 
+annotate ReportingService.HechosViaje with @Capabilities: {
+  FilterRestrictions: {
+    FilterExpressionRestrictions: [
+      { Property: fecha, AllowedExpressions: 'SingleRange' }
+    ]
+  }
+};
+
 annotate ReportingService.HechosViaje with @(UI: {
 
   HeaderInfo: {
