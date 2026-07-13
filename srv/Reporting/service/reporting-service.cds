@@ -1,4 +1,5 @@
 using { gas.reporting } from '../../../db/Reporting/index';
+using { gas.app.Motor, gas.app.Transmision } from '../../../db/schema';
 
 service ReportingService {
 
@@ -24,6 +25,13 @@ service ReportingService {
 
   @readonly
   entity DimensionAlmacen as projection on reporting.DimAlmacen;
+
+  // Entidades operacionales para value help de componentes
+  @readonly
+  entity Motores as projection on Motor;
+
+  @readonly
+  entity Transmisiones as projection on Transmision;
 
   // Vistas agregadas (para gráficos y KPIs)
   @readonly
