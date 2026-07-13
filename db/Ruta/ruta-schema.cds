@@ -1,5 +1,7 @@
 using { managed, cuid } from '@sap/cds/common';
 
+namespace gas.app;
+
 entity Ruta : managed, cuid {
   @mandatory descripcion : String; // Origen - Destino
   @mandatory distanciaKm : Decimal(10,2);

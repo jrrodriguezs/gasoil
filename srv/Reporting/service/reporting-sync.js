@@ -8,79 +8,107 @@ async function sincronizarHechosViaje() {
   const tx = cds.transaction();
 
   try {
-    // Entidades operacionales
-    const { Viaje, Vehiculo, Chofer, Ruta, Proveedor, Rubros, Almacen } = cds.entities('gas.app');
+    // Entidades operacionales (usamos nombres completos para evitar problemas
+    // de resolución de cds.entities en entornos de servicio)
+    const OP = {
+      Viaje: 'gas.app.Viaje',
+      Vehiculo: 'gas.app.Vehiculo',
+      Chofer: 'gas.app.Chofer',
+      Ruta: 'gas.app.Ruta',
+      Proveedor: 'gas.app.Proveedor',
+      Rubros: 'gas.app.Rubros',
+      Almacen: 'gas.app.Almacen',
+      Motor: 'gas.app.Motor',
+      Caja: 'gas.app.Caja',
+      Transmision: 'gas.app.Transmision',
+      Telemetria: 'gas.app.Telemetria'
+    };
 
     // Entidades de reporting
-    const {
-      HechoViaje,
-      DimTiempo,
-      DimVehiculo,
-      DimChofer,
-      DimRuta,
-      DimProveedor,
-      DimAlmacen
-    } = cds.entities('gas.reporting');
+    const REP = {
+      HechoViaje: 'gas.reporting.HechoViaje',
+      DimTiempo: 'gas.reporting.DimTiempo',
+      DimVehiculo: 'gas.reporting.DimVehiculo',
+      DimChofer: 'gas.reporting.DimChofer',
+      DimRuta: 'gas.reporting.DimRuta',
+      DimProveedor: 'gas.reporting.DimProveedor',
+      DimAlmacen: 'gas.reporting.DimAlmacen'
+    };
 
     // ── 1. Leer datos operacionales ───────────────────────────────
-    const [viajes, vehiculos, choferes, rutas, proveedores, rubros, almacenes] = await Promise.all([
-      tx.run(SELECT.from(Viaje, v => {
-        v('*'),
-        v.vehiculo(vh => {
-          vh('*'),
-          vh.motor(m => m('*')),
-          vh.transmision(t => t('*')),
-          vh.caja(c => c('*'))
-        }),
-        v.chofer('*'),
-        v.ruta(r => { r('*'), r.puntos('*') }),
-        v.proveedor(p => { p('*'), p.precios('*') }),
-        v.rubro('*'),
-        v.logs('*')
-      })),
-      tx.run(SELECT.from(Vehiculo, vh => {
-        vh('*'),
-        vh.motor(m => m('*')),
-        vh.transmision(t => t('*')),
-        vh.caja(c => c('*'))
-      })),
-      tx.run(SELECT.from(Chofer)),
-      tx.run(SELECT.from(Ruta, r => { r('*'), r.puntos('*') })),
-      tx.run(SELECT.from(Proveedor, p => { p('*'), p.precios('*') })),
-      tx.run(SELECT.from(Rubros)),
-      tx.run(SELECT.from(Almacen, a => { a('*'), a.tanques('*') }))
+    const [viajes, vehiculos, choferes, rutas, proveedores, rubros, almacenes, motores, cajas, transmisiones, telemetrias] = await Promise.all([
+      tx.run(SELECT.from(OP.Viaje)),
+      tx.run(SELECT.from(OP.Vehiculo)),
+      tx.run(SELECT.from(OP.Chofer)),
+      tx.run(SELECT.from(OP.Ruta)),
+      tx.run(SELECT.from(OP.Proveedor)),
+      tx.run(SELECT.from(OP.Rubros)),
+      tx.run(SELECT.from(OP.Almacen)),
+      tx.run(SELECT.from(OP.Motor)),
+      tx.run(SELECT.from(OP.Caja)),
+      tx.run(SELECT.from(OP.Transmision)),
+      tx.run(SELECT.from(OP.Telemetria))
     ]);
+
+    const byId = (arr) => new Map(arr.map(x => [x.ID, x]));
+    const vehiculoMap = byId(vehiculos);
+    const choferMap = byId(choferes);
+    const rutaMap = byId(rutas);
+    const proveedorMap = byId(proveedores);
+    const rubroMap = byId(rubros);
+    const almacenMap = byId(almacenes);
+    const motorMap = byId(motores);
+    const cajaMap = byId(cajas);
+    const transmisionMap = byId(transmisiones);
+
+    const telemetriaPorViaje = new Map();
+    for (const t of telemetrias) {
+      const lista = telemetriaPorViaje.get(t.viaje_ID) || [];
+      lista.push(t);
+      telemetriaPorViaje.set(t.viaje_ID, lista);
+    }
+
+    // Enriquecer viajes con relaciones ya cargadas
+    const viajesEnriquecidos = viajes.map(v => ({
+      ...v,
+      vehiculo: v.vehiculo_ID ? vehiculoMap.get(v.vehiculo_ID) : null,
+      chofer: v.chofer_ID ? choferMap.get(v.chofer_ID) : null,
+      ruta: v.ruta_ID ? rutaMap.get(v.ruta_ID) : null,
+      proveedor: v.proveedor_ID ? proveedorMap.get(v.proveedor_ID) : null,
+      rubro: v.rubro_ID ? rubroMap.get(v.rubro_ID) : null,
+      logs: telemetriaPorViaje.get(v.ID) || []
+    }));
 
     // ── 2. Poblar DimTiempo ───────────────────────────────────────
     const fechasUnicas = [...new Set(viajes.map(v => v.fecha).filter(Boolean))];
     const dimTiempoEntries = fechasUnicas.map(fechaStr => construirDimTiempo(fechaStr));
 
     // ── 3. Poblar dimensiones ─────────────────────────────────────
-    const dimVehiculoEntries = vehiculos.map(construirDimVehiculo);
-    const dimChoferEntries = choferes.map(c => construirDimChofer(c, viajes));
+    const dimVehiculoEntries = vehiculos.map(vh => construirDimVehiculo(vh, { motorMap, cajaMap, transmisionMap }));
+    const dimChoferEntries = choferes.map(c => construirDimChofer(c, viajesEnriquecidos));
     const dimRutaEntries = rutas.map(construirDimRuta);
     const dimProveedorEntries = proveedores.map(construirDimProveedor);
     const dimAlmacenEntries = almacenes.map(construirDimAlmacen);
 
     // ── 4. Transformar viajes en hechos ────────────────────────────
-    const hechos = viajes.map(v => construirHechoViaje(v));
+    const hechos = viajesEnriquecidos.map(v => construirHechoViaje(v));
 
     // ── 5. Limpiar e insertar (full refresh) ───────────────────────
-    await tx.run(DELETE.from(DimTiempo));
-    await tx.run(DELETE.from(DimVehiculo));
-    await tx.run(DELETE.from(DimChofer));
-    await tx.run(DELETE.from(DimRuta));
-    await tx.run(DELETE.from(DimProveedor));
-    await tx.run(DELETE.from(DimAlmacen));
-    await tx.run(DELETE.from(HechoViaje));
+    await tx.run(DELETE.from(REP.DimTiempo));
+    await tx.run(DELETE.from(REP.DimVehiculo));
+    await tx.run(DELETE.from(REP.DimChofer));
+    await tx.run(DELETE.from(REP.DimRuta));
+    await tx.run(DELETE.from(REP.DimProveedor));
+    await tx.run(DELETE.from(REP.DimAlmacen));
+    await tx.run(DELETE.from(REP.HechoViaje));
 
-    if (dimTiempoEntries.length) await tx.run(INSERT.into(DimTiempo).entries(dimTiempoEntries));
-    if (dimVehiculoEntries.length) await tx.run(INSERT.into(DimVehiculo).entries(dimVehiculoEntries));
-    if (dimChoferEntries.length) await tx.run(INSERT.into(DimChofer).entries(dimChoferEntries));
-    if (dimRutaEntries.length) await tx.run(INSERT.into(DimRuta).entries(dimRutaEntries));
-    if (dimProveedorEntries.length) await tx.run(INSERT.into(DimProveedor).entries(dimProveedorEntries));
-    if (dimAlmacenEntries.length) await tx.run(INSERT.into(DimAlmacen).entries(dimAlmacenEntries));
-    if (hechos.length) await tx.run(INSERT.into(HechoViaje).entries(hechos));
+    if (dimTiempoEntries.length) await tx.run(INSERT.into(REP.DimTiempo).entries(dimTiempoEntries));
+    if (dimVehiculoEntries.length) await tx.run(INSERT.into(REP.DimVehiculo).entries(dimVehiculoEntries));
+    if (dimChoferEntries.length) await tx.run(INSERT.into(REP.DimChofer).entries(dimChoferEntries));
+    if (dimRutaEntries.length) await tx.run(INSERT.into(REP.DimRuta).entries(dimRutaEntries));
+    if (dimProveedorEntries.length) await tx.run(INSERT.into(REP.DimProveedor).entries(dimProveedorEntries));
+    if (dimAlmacenEntries.length) await tx.run(INSERT.into(REP.DimAlmacen).entries(dimAlmacenEntries));
+    if (hechos.length) await tx.run(INSERT.into(REP.HechoViaje).entries(hechos));
 
     await tx.commit();
     console.log(`[Reporting] ${hechos.length} hechos sincronizados.`);
@@ -135,19 +163,22 @@ function getISOWeek(date) {
 }
 
 // ─── Helpers de dimensiones ─────────────────────────────────────────
-function construirDimVehiculo(vh) {
+function construirDimVehiculo(vh, { motorMap, cajaMap, transmisionMap }) {
   const createdAt = vh.createdAt ? new Date(vh.createdAt) : null;
   const antiguedadDias = createdAt ? Math.floor((Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24)) : null;
   const cargautil = vh.cargautil || 0;
+  const motor = vh.motor_ID ? motorMap.get(vh.motor_ID) : null;
+  const caja = vh.caja_ID ? cajaMap.get(vh.caja_ID) : null;
+  const transmision = vh.transmision_ID ? transmisionMap.get(vh.transmision_ID) : null;
 
   return {
     vehiculo_ID: vh.ID,
     placa: vh.placa,
     modelo: vh.modelo,
-    motorModelo: vh.motor?.modelo?.name || vh.motor?.modelo_code || '',
-    transmisionModelo: vh.transmision?.modeloDiferencial || '',
-    cajaModelo: vh.caja?.modeloCaja || '',
-    ejes: vh.ejescamion_code || String(vh.ejescamion) || '',
+    motorModelo: motor?.modelo_code || '',
+    transmisionModelo: transmision?.modeloDiferencial || '',
+    cajaModelo: caja?.modeloCaja || '',
+    ejes: vh.ejescamion_code || '',
     configuracion: vh.configuraciondelremolque,
     capacidadTotal: vh.capacidadTotal,
     cargautil,
@@ -194,16 +225,11 @@ function construirDimRuta(r) {
 }
 
 function construirDimProveedor(p) {
-  const precios = p.precios || [];
-  const precioPromedio = precios.length
-    ? precios.reduce((sum, ph) => sum + (ph.precio || 0), 0) / precios.length
-    : 0;
-
   return {
     proveedor_ID: p.ID,
     nombre: p.nombre,
     capacidadDespacho: p.capacidad_despacho,
-    precioPromedio
+    precioPromedio: 0
   };
 }
 
@@ -214,7 +240,7 @@ function construirDimAlmacen(a) {
     ubicacion: a.ubicacion,
     estado: a.estado || '',
     capacidadTotal: a.capacidadTotal,
-    tanquesCount: a.tanques?.length || 0
+    tanquesCount: 0
   };
 }
 

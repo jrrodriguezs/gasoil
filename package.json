@@ -28,6 +28,9 @@
     "tmp": "^0.2.7"
   },
   "cds": {
+    "features": {
+      "deploy_data_onconflict": "replace"
+    },
     "requires": {
       "[test]": {
         "db": {

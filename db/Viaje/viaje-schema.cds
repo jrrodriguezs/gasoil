@@ -1,11 +1,11 @@
 using { managed } from '@sap/cds/common';
 using {  gas.app.Vehiculo } from '../Vehiculo/vehiculo-schema';
 using { gas.app.Chofer } from '../Chofer/chofer-schema';
-using { Ruta } from '../Ruta/ruta-schema';
+using { gas.app.Ruta as Ruta } from '../Ruta/ruta-schema';
 using { gas.common.EstadoViaje } from '../common';
 using { gas.app.Telemetria as Telemetria } from '../Telemetria/telemetria-schema';
 using { gas.app.Proveedor as Proveedor } from '../Proveedor/proveedor-schema';
-using { Rubros } from '../Rubro/rubro-schema';
+using { gas.app.Rubros as Rubros } from '../Rubro/rubro-schema';
 
 namespace gas.app;
 @odata.draft.bypass
