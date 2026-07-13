@@ -95,18 +95,18 @@
       "routes": [
         {
           "pattern": ":?query:",
-          "name": "HechosViajeList",
-          "target": "HechosViajeList"
+          "name": "HechosViajeReportesList",
+          "target": "HechosViajeReportesList"
         }
       ],
       "targets": {
-        "HechosViajeList": {
+        "HechosViajeReportesList": {
           "type": "Component",
           "id": "HechosViajeList",
           "name": "sap.fe.templates.ListReport",
           "options": {
             "settings": {
-              "contextPath": "/HechosViaje",
+              "contextPath": "/HechosViajeReportes",
               "variantManagement": "Page",
               "controlConfiguration": {
                 "@com.sap.vocabularies.UI.v1.LineItem": {
