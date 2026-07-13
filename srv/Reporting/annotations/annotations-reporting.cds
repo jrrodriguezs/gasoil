@@ -10,31 +10,87 @@ annotate ReportingService.HechosViaje with @(UI: {
   },
 
   SelectionFields: [
+    // Tiempo
     fecha,
+    fechaKey,
     anio,
     mes,
     trimestre,
     semanaAnio,
+    diaSemana,
+    nombreMes,
     esFinDeSemana,
+    periodoYMD,
+    periodoYQT,
+
+    // Vehículo y componentes
+    vehiculo_ID,
     placaVehiculo,
     modeloVehiculo,
-    vehiculo_ID,
-    nombreChofer,
+    motor_ID,
+    transmision_ID,
+    caja_ID,
+
+    // Chofer
     chofer_ID,
-    descripcionRuta,
+    nombreChofer,
+    cedulaChofer,
+
+    // Ruta
     ruta_ID,
-    esViajeCorto,
-    esViajeLargo,
+    descripcionRuta,
+
+    // Proveedor / Almacén / Rubro
+    proveedor_ID,
+    nombreProveedor,
+    almacen_ID,
+    nombreAlmacen,
+    rubro_ID,
+    nombreRubro,
+
+    // Estado y calidad
     estadoViaje,
     esFinalizado,
     esCancelado,
     cumpleRendimientoTeorico,
-    eficienciaCategoria,
     esSobrecarga,
+    esViajeCorto,
+    esViajeLargo,
+    eficienciaCategoria,
+
+    // Métricas de distancia y tiempo
+    distanciaKm,
+    kilometrosRecorridos,
+    duracionHoras,
+
+    // Métricas de combustible y costo
+    litrosSalida,
+    consumoRealTotal,
+    consumoTeoricoTotal,
+    combustibleTeorico,
+    costoTeorico,
+    costoPorKm,
+    precioCombustible,
+
+    // Rendimiento
+    rendimientoReal,
+    rendimientoTeorico,
+    variacionRendimientoPct,
+    kilometrosPorLitro,
+    horasPorLitro,
+
+    // Carga
+    pesoCarga,
+    pesoIda,
+    pesoVuelta,
     pesoTotal,
-    nombreProveedor,
-    nombreAlmacen,
-    nombreRubro
+    toneladasPorKm,
+
+    // Telemetría
+    velocidadPromedio,
+    velocidadMaxima,
+    altitudPromedio,
+    registrosTelemetria
   ],
 
   LineItem: [
@@ -93,7 +149,107 @@ annotate ReportingService.HechosViaje with {
   pesoCarga              @Measures.Unit: 'kg';
   pesoTotal              @Measures.Unit: 'kg';
   variacionRendimientoPct @UI.Criticality: variacionCriticality;
+
+  // Textos descriptivos y value helps sobre dimensiones
+  vehiculo_ID @(
+    Common.Text: placaVehiculo,
+    Common.ValueList: {
+      CollectionPath: 'DimensionVehiculo',
+      Label: 'Vehículos',
+      Parameters: [
+        { $Type: 'Common.ValueListParameterOut', LocalDataProperty: vehiculo_ID, ValueListProperty: 'vehiculo_ID' },
+        { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'placa' },
+        { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'modelo' }
+      ]
+    }
+  );
+  chofer_ID @(
+    Common.Text: nombreChofer,
+    Common.ValueList: {
+      CollectionPath: 'DimensionChofer',
+      Label: 'Choferes',
+      Parameters: [
+        { $Type: 'Common.ValueListParameterOut', LocalDataProperty: chofer_ID, ValueListProperty: 'chofer_ID' },
+        { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'nombreCompleto' },
+        { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'cedula' }
+      ]
+    }
+  );
+  ruta_ID @(
+    Common.Text: descripcionRuta,
+    Common.ValueList: {
+      CollectionPath: 'DimensionRuta',
+      Label: 'Rutas',
+      Parameters: [
+        { $Type: 'Common.ValueListParameterOut', LocalDataProperty: ruta_ID, ValueListProperty: 'ruta_ID' },
+        { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'descripcion' },
+        { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'distanciaKm' }
+      ]
+    }
+  );
+  proveedor_ID @(
+    Common.Text: nombreProveedor,
+    Common.ValueList: {
+      CollectionPath: 'DimensionProveedor',
+      Label: 'Proveedores',
+      Parameters: [
+        { $Type: 'Common.ValueListParameterOut', LocalDataProperty: proveedor_ID, ValueListProperty: 'proveedor_ID' },
+        { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'nombre' }
+      ]
+    }
+  );
+  almacen_ID @(
+    Common.Text: nombreAlmacen,
+    Common.ValueList: {
+      CollectionPath: 'DimensionAlmacen',
+      Label: 'Almacenes',
+      Parameters: [
+        { $Type: 'Common.ValueListParameterOut', LocalDataProperty: almacen_ID, ValueListProperty: 'almacen_ID' },
+        { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'nombreSede' }
+      ]
+    }
+  );
+  rubro_ID @Common.Text: nombreRubro;
 };
+
+// Dimensiones: listas para value help
+annotate ReportingService.DimensionVehiculo with @(UI: {
+  LineItem: [
+    { Value: vehiculo_ID, Label: 'ID' },
+    { Value: placa,       Label: 'Placa' },
+    { Value: modelo,      Label: 'Modelo' }
+  ]
+});
+
+annotate ReportingService.DimensionChofer with @(UI: {
+  LineItem: [
+    { Value: chofer_ID,      Label: 'ID' },
+    { Value: nombreCompleto, Label: 'Nombre' },
+    { Value: cedula,         Label: 'Cédula' }
+  ]
+});
+
+annotate ReportingService.DimensionRuta with @(UI: {
+  LineItem: [
+    { Value: ruta_ID,     Label: 'ID' },
+    { Value: descripcion, Label: 'Descripción' },
+    { Value: distanciaKm, Label: 'Distancia (km)' }
+  ]
+});
+
+annotate ReportingService.DimensionProveedor with @(UI: {
+  LineItem: [
+    { Value: proveedor_ID, Label: 'ID' },
+    { Value: nombre,       Label: 'Nombre' }
+  ]
+});
+
+annotate ReportingService.DimensionAlmacen with @(UI: {
+  LineItem: [
+    { Value: almacen_ID, Label: 'ID' },
+    { Value: nombreSede, Label: 'Sede' }
+  ]
+});
 
 annotate ReportingService.AggMensual with @(UI: {
   HeaderInfo: {
