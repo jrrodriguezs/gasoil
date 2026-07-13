@@ -5,6 +5,45 @@ sap.ui.define([
 
   return ControllerExtension.extend('reportes.ext.controller.ListReportExt', {
 
+    onInit: function () {
+      setTimeout(function () {
+        this._addExportButton();
+      }.bind(this), 0);
+    },
+
+    _addExportButton: function () {
+      sap.ui.require(['sap/m/Button'], function (Button) {
+        var oView = this.base.getView();
+        if (!oView) {
+          return;
+        }
+        var aPages = oView.findElements(true, function (oElement) {
+          return oElement.isA && oElement.isA('sap.f.DynamicPage');
+        });
+        if (!aPages || !aPages.length) {
+          return;
+        }
+        var oPage = aPages[0];
+        var oTitle = oPage.getTitle();
+        if (!oTitle || !oTitle.getActions) {
+          return;
+        }
+        var aActions = oTitle.getActions();
+        if (aActions.some(function (oAction) {
+          return oAction.getId && oAction.getId().indexOf('exportPDF') !== -1;
+        })) {
+          return;
+        }
+        oTitle.addAction(new Button({
+          id: oView.createId('exportPDFButton'),
+          text: 'Exportar PDF',
+          icon: 'sap-icon://pdf-text',
+          type: 'Emphasized',
+          press: this.onExportarPDF.bind(this)
+        }));
+      }.bind(this));
+    },
+
     onExportarPDF: async function () {
       try {
         sap.ui.require(['sap/m/MessageToast'], function (MessageToast) {

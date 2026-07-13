@@ -118,17 +118,6 @@
               "contextPath": "/HechosViajeReportes",
               "variantManagement": "Page",
               "initialLoad": true,
-              "content": {
-                "header": {
-                  "actions": {
-                    "exportarPDF": {
-                      "press": "reportes.ext.controller.ListReportExt.onExportarPDF",
-                      "text": "Exportar PDF",
-                      "icon": "sap-icon://pdf-text"
-                    }
-                  }
-                }
-              },
               "controlConfiguration": {
                 "@com.sap.vocabularies.UI.v1.LineItem": {
                   "tableSettings": {
