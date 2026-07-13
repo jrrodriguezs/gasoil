@@ -34,15 +34,20 @@ sap.ui.define([], function () {
   }
 
   function _cargarScript(sUrl) {
-    return new Promise(function (resolve, reject) {
-      var oScript = document.createElement('script');
-      oScript.src = sUrl;
-      oScript.onload = resolve;
-      oScript.onerror = function () {
-        reject(new Error('No se pudo cargar ' + sUrl));
-      };
-      document.head.appendChild(oScript);
-    });
+    return fetch(sUrl)
+      .then(function (oResponse) {
+        if (!oResponse.ok) {
+          throw new Error('HTTP ' + oResponse.status + ' en ' + sUrl);
+        }
+        return oResponse.text();
+      })
+      .then(function (sCode) {
+        // Forzar la rama global del UMD ocultando define/exports/module,
+        // de lo contrario SAPUI5/RequireJS lo registra como módulo AMD
+        // y no se expone window.jspdf.
+        var fnEjecutar = new Function('define', 'exports', 'module', sCode + '\n//# sourceURL=' + sUrl);
+        fnEjecutar(undefined, undefined, undefined);
+      });
   }
 
   async function _obtenerDatosReporte() {
