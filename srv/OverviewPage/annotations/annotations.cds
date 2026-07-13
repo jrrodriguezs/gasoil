@@ -57,8 +57,8 @@ annotate ConfigService.PerformanceAvg with @UI: {
   Identification #KPI: [
     {
       $Type: 'UI.DataField',
-      Value: totalVehiculos,
-      Label: 'Vehiculos considerados'
+      Value: totalViajes,
+      Label: 'Viajes considerados'
     }
   ],
   PresentationVariant #KPI: {

@@ -18,10 +18,10 @@ extend service ConfigService with {
     }where promedioKm is not null;
     
     @odata.draft.enabled: false
-    define view PerformanceAvg as select from Vehiculos {
-        key avg(promedioKm) as rendimientoPromedioGeneral: Decimal(10,2),
-        count(ID)       as totalVehiculos : Integer,
-    }where promedioKm is not null;
+    define view PerformanceAvg as select from Viajes {
+        key avg(kilometrosPorLitro) as rendimientoPromedioGeneral: Decimal(10,2),
+        count(ID)                   as totalViajes : Integer,
+    };
 
     @odata.draft.enabled: false
     define view PerformanceByModel as select from Vehiculos {
@@ -83,10 +83,15 @@ extend service ConfigService with {
     @odata.draft.enabled: false
     define view CostoCombustiblePromedio as select from Viajes {
         key 'ABC' as id:String,
-        sum(consumoRealTotal) as totalCombustibleConsumido: Decimal(10,2),
+        sum(consumoRealTotal) as totalCombustibleConsumido: Decimal(12,2),
+        sum(kilometrosRecorridos) as totalKilometrosRecorridos: Decimal(12,2),
         (select avg(ultimoPrecio) from UltimoPrecioCombustibleProveedor) as precioPromedioCombustible: Decimal(10,2),
-        $self.totalCombustibleConsumido * $self.precioPromedioCombustible as costoCombustible: Decimal(10,2),
-        $self.costoCombustible / $self.totalCombustibleConsumido as costoPromedioPorLitro: Decimal(10,2) 
+        $self.totalCombustibleConsumido * $self.precioPromedioCombustible as costoCombustible: Decimal(12,2),
+        $self.costoCombustible / $self.totalCombustibleConsumido as costoPromedioPorLitro: Decimal(10,2),
+        case
+            when $self.totalKilometrosRecorridos = 0 or $self.totalKilometrosRecorridos is null then 0
+            else round($self.costoCombustible / $self.totalKilometrosRecorridos, 2)
+        end as costoPorKm: Decimal(10,2)
     }
 
     @odata.draft.enabled: false
@@ -99,18 +104,36 @@ extend service ConfigService with {
     @odata.draft.enabled: false
     define view TankCritical as select from Tanques{
         key count(ID) as cantidad: Integer
-    } where Tanques.nivel_actual <= Tanques.nivel_minimo and Tanques.estadoTanque.code = 'Operativo';
+    } where Tanques.estadoTanque.code = 'Operativo'
+      and round((Tanques.nivel_actual * 100.0) / Tanques.capacidadTotal, 2) <= 25;
 
     @odata.draft.enabled: false
     define view PerformancePlannedVSReal as select from Viajes {
         key 'ABC' as id:String,
         avg(kilometrosPorLitro) as rendimientoPromedioReal: Decimal(10,2),
-        avg(rendimientoTeorico) as rendimientoPromedioTeorico: Decimal(10,2),
+        avg(vehiculo.rendimientoBase) as rendimientoPromedioTeorico: Decimal(10,2),
         case 
             when $self.rendimientoPromedioTeorico = 0  or $self.rendimientoPromedioTeorico is null then 0
             else round((($self.rendimientoPromedioReal - $self.rendimientoPromedioTeorico) / $self.rendimientoPromedioTeorico) * 100, 2)
         end as variacionPorcentual: Decimal(10,2)
     }
+
+    @odata.draft.enabled: false
+    define view DriverPerformance as select from Viajes {
+        key chofer.ID as chofer_ID: UUID,
+            avg(kilometrosPorLitro) as rendimientoPromedio: Decimal(10,2)
+    } group by chofer.ID;
+
+    @odata.draft.enabled: false
+    define view DriverRating as select from DriverPerformance {
+        key 'ABC' as id:String,
+            avg(rendimientoPromedio) as rendimientoPromedioConductores: Decimal(10,2),
+            case
+                when avg(rendimientoPromedio) is null then 0
+                when avg(rendimientoPromedio) * 25 > 100 then 100
+                else round(avg(rendimientoPromedio) * 25, 2)
+            end as calificacionPromedioConductores: Decimal(5,2)
+    };
 
     @odata.draft.enabled: false
     define view PerformacePerMotor as select from Vehiculos{

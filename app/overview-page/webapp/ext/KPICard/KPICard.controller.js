@@ -44,13 +44,20 @@
             _getModel: function() {
                 var oModel;
                 if (this.getView && this.getView()) {
-                    oModel = this.getView().getModel("mainModel");
+                    oModel = this.getView().getModel("mainModel") || this.getView().getModel();
                 }
                 if (!oModel && this.getOwnerComponent && this.getOwnerComponent()) {
-                    oModel = this.getOwnerComponent().getModel("mainModel");
+                    var oComp = this.getOwnerComponent();
+                    while (oComp) {
+                        oModel = oComp.getModel("mainModel") || oComp.getModel();
+                        if (oModel) {
+                            break;
+                        }
+                        oComp = oComp.getOwnerComponent ? oComp.getOwnerComponent() : null;
+                    }
                 }
                 if (!oModel) {
-                    oModel = sap.ui.getCore().getModel("mainModel");
+                    oModel = sap.ui.getCore().getModel("mainModel") || sap.ui.getCore().getModel();
                 }
                 return oModel;
             },
@@ -92,7 +99,7 @@
 
                 return {
                     avgPerformance: this.NumberFormat(avgPerformance[0]?.rendimientoPromedioGeneral),
-                    fuelCostPerKm: this.NumberFormat(fuelCostPerKm[0]?.precioPromedioCombustible),
+                    fuelCostPerKm: this.NumberFormat(fuelCostPerKm[0]?.costoPorKm),
                     plannedVsActual: Number(plannedVsActual[0]?.variacionPorcentual).toFixed(1),
                     criticalTankCount: criticalTankCount[0]?.cantidad,
                     driverRating: this.NumberFormat(driverRating)
@@ -141,8 +148,8 @@
 
             async getDriverRating(){
                 try {
-                    const d = await this._readEntity("/PerformanceAvg");
-                    return d[0]?.rendimientoPromedioGeneral || "N/A";
+                    const d = await this._readEntity("/DriverRating");
+                    return d[0]?.calificacionPromedioConductores ?? "N/A";
                 } catch (error) {
                     console.error("Error al obtener driver rating:", error);
                     return "N/A";
