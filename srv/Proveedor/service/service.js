@@ -46,32 +46,25 @@ module.exports = async (srv) => {
         const { AlmacenID } = req.data;
         const tx = cds.tx(req);
 
-        const [latestOrder, latestSurtido] = await Promise.all([
+        // Calcular capacidad máxima del almacén (suma de capacidadTotal de tanques) y capacidad actual
+        const [capacidadTotalResult, capacidadActualResult] = await Promise.all([
             tx.run(
-                SELECT.from(OrdenesCarga)
-                    .columns("fechaCarga")
-                    .where({ "almacen_ID": AlmacenID })
-                    .orderBy({ fechaCarga: 'desc' })
-                    .limit(1)
+                SELECT.from(Tanques)
+                    .columns("SUM(capacidadTotal) as total")
+                    .where({ almacen_ID: AlmacenID })
             ),
             tx.run(
-                SELECT.from(SurtidosUnidad)
-                    .columns("fechaCarga")
-                    .where({ "almacen_ID": AlmacenID })
-                    .orderBy({ fechaCarga: 'desc' })
-                    .limit(1)
+                SELECT.from(Tanques)
+                    .columns("SUM(nivel_actual) as total")
+                    .where({ almacen_ID: AlmacenID })
             )
         ]);
 
-        const orderDate = latestOrder?.[0]?.fechaCarga ? new Date(latestOrder[0].fechaCarga) : null;
-        const surtidoDate = latestSurtido?.[0]?.fechaCarga ? new Date(latestSurtido[0].fechaCarga) : null;
+        const capacidadTotalAlmacen = Number(capacidadTotalResult?.[0]?.total || 0);
+        const capacidadActual = Number(capacidadActualResult?.[0]?.total || 0);
 
-        let end;
-        if (orderDate || surtidoDate) {
-            end = new Date(Math.max(orderDate ? orderDate.getTime() : 0, surtidoDate ? surtidoDate.getTime() : 0));
-        } else {
-            end = new Date();
-        }
+        // Rango de fechas: hoy - 30 días hasta hoy
+        const end = new Date();
         end.setHours(23, 59, 59, 999);
         const start = new Date(end);
         start.setDate(start.getDate() - 30);
@@ -108,36 +101,29 @@ module.exports = async (srv) => {
             surtidoPorDia[fecha] = (surtidoPorDia[fecha] || 0) + Number(s.carga_real || 0);
         }
 
-        const capacidadActualResult = await tx.run(
-            SELECT.from(Tanques)
-                .columns("SUM(nivel_actual) as total")
-                .where({ almacen_ID: AlmacenID })
-        );
-        const capacidadActual = Number(capacidadActualResult?.[0]?.total || 0);
-
-        const result = [];
-        const current = new Date(start);
-        let capacidadDia = capacidadActual;
+        // Generar los 31 días y calcular capacidad histórica desde el más reciente hacia atrás
         const days = [];
+        const current = new Date(start);
         while (current <= end) {
             const fecha = current.toISOString().split('T')[0];
             days.push({ fecha, capacidad: 0 });
             current.setDate(current.getDate() + 1);
         }
 
+        let capacidadDia = capacidadActual;
         for (let i = days.length - 1; i >= 0; i--) {
-            const fecha = days[i].fecha;
-            const carga = cargaPorDia[fecha] || 0;
-            const surtido = surtidoPorDia[fecha] || 0;
             if (i === days.length - 1) {
                 capacidadDia = capacidadActual;
             } else {
+                const fechaSiguiente = days[i + 1].fecha;
+                const carga = cargaPorDia[fechaSiguiente] || 0;
+                const surtido = surtidoPorDia[fechaSiguiente] || 0;
                 capacidadDia = capacidadDia - carga + surtido;
             }
-            days[i].capacidad = capacidadDia;
+            days[i].capacidad = Math.max(0, capacidadDia);
         }
 
-        return { items: days };
+        return { items: days, capacidadTotalAlmacen: capacidadTotalAlmacen };
     });
 };
 

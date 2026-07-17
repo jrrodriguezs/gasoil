@@ -40,6 +40,7 @@ extend service ConfigService with {
 
     type VolumeHistoryResult {
         items: many VolumeHistoryItem;
+        capacidadTotalAlmacen: Double;
     }
 
     function QuantityByAlmacen (AlmacenID: UUID) returns QuantityByAlmacenResult;
