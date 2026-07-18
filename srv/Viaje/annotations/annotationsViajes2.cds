@@ -41,7 +41,8 @@ annotate call.Viajes with {
     choferCedula          @title: 'Cédula del chofer';
     choferTelefono        @title: 'Teléfono del chofer';
     choferImagen          @title: 'Foto del chofer' @UI.IsImageURL;
-
+    numeroViaje           @title: 'Número de viaje' @readonly: true;
+    numeroViajeFormateado @title: 'Número de viaje' @readonly: true;
 };
 
 
@@ -228,8 +229,8 @@ annotate call.Viajes with @(
     HeaderInfo                  : {
         TypeName      : 'Viaje',
         TypeNamePlural: 'Viajes',
-        Title         : {Value: ruta.destino},
-        Description   : {Value: fecha}
+        Title         : {Value: nombreRuta},
+        Description   : {Value: numeroViajeFormateado}
     },
     
     HeaderFacets                : [
@@ -267,11 +268,6 @@ annotate call.Viajes with @(
             $Type : 'UI.ReferenceFacet',
             ID    : 'ViajesEnRutaFacet',
             Target: '@UI.DataPoint#viajesEnRuta',
-        },
-        {
-            $Type : 'UI.ReferenceFacet',
-            ID    : 'ConsumoPromedioRutaFacet',
-            Target: '@UI.DataPoint#consumoPromedioRuta',
         },
     ],
 
@@ -311,24 +307,11 @@ annotate call.Viajes with @(
         Criticality: #Information,
         Title      : 'Teléfono chofer'
     },
-    DataPoint #consumoPromedioRuta: {
-        $Type      : 'UI.DataPointType',
-        Value      : consumoPromedioRuta,
-        TargetValue: consumoUltimoViajeRuta,
-        Criticality: #Information,
-        Title      : 'Consumo promedio vs último'
-    },
     DataPoint #combustibleTeorico: {
         $Type      : 'UI.DataPointType',
         Value      : combustibleTeorico,
         Criticality: #Information,
         Title      : 'Combustible necesario'
-    },
-    DataPoint #chofer           : {
-        $Type      : 'UI.DataPointType',
-        Value      : choferNombreCompleto,
-        Criticality: #Information,
-        Title      : 'Chofer asignado'
     },
     DataPoint #vehiculoPlaca    : {
         $Type      : 'UI.DataPointType',
@@ -404,6 +387,10 @@ annotate call.Viajes with @(
             Label : 'Empezar viaje',
         },
         {
+            Value: numeroViajeFormateado,
+            Label: 'Número de viaje'
+        },
+        {
             Value: fecha,
             Label: 'Fecha'
         },
@@ -453,6 +440,8 @@ annotate call.Viajes with @(
         { Value: pesoCarga, Label: 'Peso carga' }
     ],
     Identification              : [
+        { Value: nombreRuta, Label: 'Ruta' },
+        { Value: numeroViaje, Label: 'Número de viaje' },
         { Value: fecha, Label: 'Fecha' },
         { Value: ruta_ID, Label: 'Ruta' },
         { Value: vehiculo_ID, Label: 'Vehiculo' },

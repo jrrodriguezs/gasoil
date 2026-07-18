@@ -172,16 +172,32 @@
               "editableHeaderContent": false,
               "contextPath": "/Viajes",
               "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.HeaderInfo": {
+                  "headerTitle": {
+                    "type": "XMLFragment",
+                    "name": "viajesmaint.ext.fragment.HeaderTitle"
+                  }
+                },
                 "@com.sap.vocabularies.UI.v1.HeaderFacets": {
                   "facets": {
                     "ChoferHeader": {
                       "type": "XMLFragment",
                       "name": "viajesmaint.ext.fragment.ChoferHeader",
-                      "title": "Chofer asignado",
+                      "title": "Chofer",
                       "stashed": false,
                       "position": {
                         "placement": "Before",
                         "anchor": "VehiculoPlacaFacet"
+                      }
+                    },
+                    "ConsumoPromedioMicroChart": {
+                      "type": "XMLFragment",
+                      "name": "viajesmaint.ext.fragment.ConsumoPromedioMicroChart",
+                      "title": "Consumo promedio vs último",
+                      "stashed": false,
+                      "position": {
+                        "placement": "After",
+                        "anchor": "ViajesEnRutaFacet"
                       }
                     },
                     "HeaderCharts": {
@@ -191,7 +207,7 @@
                       "stashed": false,
                       "position": {
                         "placement": "After",
-                        "anchor": "ConsumoPromedioRutaFacet"
+                        "anchor": "ConsumoPromedioMicroChart"
                       }
                     }
                   }
@@ -220,7 +236,7 @@
     "extends": {
       "extensions": {
         "sap.ui.controllerExtensions": {
-          "sap.fe.templates.ObjectPage.ObjectPageController": {
+          "sap.fe.templates.ObjectPage.ObjectPageController#viajesmaint::ViajesObjectPage": {
             "controllerName": "viajesmaint.ext.controller.ViajeObjectPage"
           }
         }

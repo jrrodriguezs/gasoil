@@ -11,7 +11,7 @@
             <m:HBox alignItems="Center" justifyContent="SpaceBetween" width="100%">
                 <m:SegmentedButton
                     id="periodoSelector"
-                    selectedKey="mes"
+                    selectedKey="semana"
                     selectionChange="onPeriodoChange">
                     <m:items>
                         <m:SegmentedButtonItem key="semana" text="{i18n>semana}"/>
@@ -51,4 +51,67 @@
             </m:PlanningCalendar>
         </m:content>
     </m:Page>
+
+    <m:Dialog
+        id="viajeDialog"
+        title="{i18n>detalleViajeTitulo}"
+        contentWidth="480px"
+        draggable="true"
+        resizable="true">
+        <m:content>
+            <m:VBox class="sapUiSmallMargin" width="100%">
+                <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                    <m:Label text="{i18n>numeroViajeLabel}" width="160px" design="Bold"/>
+                    <m:Text text="{dialog>/numeroViajeFormateado}"/>
+                </m:HBox>
+                <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                    <m:Label text="{i18n>rutaLabel}" width="160px" design="Bold"/>
+                    <m:Text text="{dialog>/nombreRuta}"/>
+                </m:HBox>
+                <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                    <m:Label text="{i18n>choferLabel}" width="160px" design="Bold"/>
+                    <m:Text text="{dialog>/choferNombreCompleto}"/>
+                </m:HBox>
+                <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                    <m:Label text="{i18n>vehiculoLabel}" width="160px" design="Bold"/>
+                    <m:Text text="{dialog>/placa}"/>
+                </m:HBox>
+                <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                    <m:Label text="{i18n>estatusLabel}" width="160px" design="Bold"/>
+                    <m:ObjectStatus text="{dialog>/estatus}" state="{dialog>/estatusEstado}"/>
+                </m:HBox>
+                <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                    <m:Label text="{i18n>horaSalidaLabel}" width="160px" design="Bold"/>
+                    <m:Text text="{dialog>/horaSalida}"/>
+                </m:HBox>
+                <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                    <m:Label text="{i18n>horaLlegadaLabel}" width="160px" design="Bold"/>
+                    <m:Text text="{dialog>/horaLlegada}"/>
+                </m:HBox>
+                <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                    <m:Label text="{i18n>horaLlegadaRealLabel}" width="160px" design="Bold"/>
+                    <m:Text text="{dialog>/horaLlegadaReal}"/>
+                </m:HBox>
+                <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                    <m:Label text="{i18n>origenLabel}" width="160px" design="Bold"/>
+                    <m:Text text="{dialog>/origen}"/>
+                </m:HBox>
+                <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                    <m:Label text="{i18n>destinoLabel}" width="160px" design="Bold"/>
+                    <m:Text text="{dialog>/destino}"/>
+                </m:HBox>
+                <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                    <m:Label text="{i18n>kmRecorridosLabel}" width="160px" design="Bold"/>
+                    <m:Text text="{dialog>/kilometrosRecorridos}"/>
+                </m:HBox>
+                <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                    <m:Label text="{i18n>consumoRealLabel}" width="160px" design="Bold"/>
+                    <m:Text text="{dialog>/consumoRealTotal}"/>
+                </m:HBox>
+            </m:VBox>
+        </m:content>
+        <m:beginButton>
+            <m:Button text="{i18n>cerrarDialogo}" press="onCloseDialog"/>
+        </m:beginButton>
+    </m:Dialog>
 </mvc:View>

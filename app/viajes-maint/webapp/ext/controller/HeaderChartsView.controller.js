@@ -2,8 +2,10 @@ sap.ui.define([
   "sap/ui/core/mvc/Controller",
   "sap/ui/model/Filter",
   "sap/ui/model/FilterOperator",
-  "sap/ui/model/json/JSONModel"
-], function (Controller, Filter, FilterOperator, JSONModel) {
+  "sap/suite/ui/microchart/ColumnMicroChart",
+  "sap/suite/ui/microchart/ColumnMicroChartData",
+  "sap/m/Text"
+], function (Controller, Filter, FilterOperator, ColumnMicroChart, ColumnMicroChartData, Text) {
   "use strict";
 
   function _log(sMsg, oData) {
@@ -21,9 +23,13 @@ sap.ui.define([
     }
     return oDate.toLocaleDateString("es-ES", {
       day: "2-digit",
-      month: "2-digit",
-      year: "numeric"
+      month: "2-digit"
     });
+  }
+
+  function _formatConsumo(vConsumo) {
+    var fConsumo = parseFloat(vConsumo) || 0;
+    return fConsumo.toFixed(2);
   }
 
   return Controller.extend("viajesmaint.ext.controller.HeaderChartsView", {
@@ -36,10 +42,6 @@ sap.ui.define([
       this._oRetryTimeout = null;
 
       var oView = this.getView();
-      oView.setModel(new JSONModel({
-        ultimosConsumos: [],
-        consumosPorVehiculo: []
-      }), "headerCharts");
 
       var that = this;
       oView.addEventDelegate({
@@ -47,6 +49,12 @@ sap.ui.define([
           _log("onAfterRendering del HeaderChartsView");
           if (!that._bDataLoaded) {
             that._scheduleLoad();
+          } else if (that._aLastColumnas) {
+            // Si el contenedor quedó vacío tras un re-render, volver a pintar
+            var oContainer = oView.byId("chartContainer");
+            if (oContainer && oContainer.getItems().length === 0) {
+              that._renderColumnChart(that._aLastColumnas);
+            }
           }
         }
       }, oView);
@@ -154,8 +162,8 @@ sap.ui.define([
         return;
       }
 
-      // Últimos 3 consumos de la ruta (cualquier vehículo, excluyendo el viaje actual)
-      var oBinding1 = oModel.bindList("/Viajes", null, [], [
+      // Últimos 5 consumos de la ruta (cualquier vehículo, excluyendo el viaje actual)
+      var oBinding = oModel.bindList("/Viajes", null, [], [
         new Filter("ruta_ID", FilterOperator.EQ, sRutaId),
         new Filter("ID", FilterOperator.NE, sViajeId)
       ], {
@@ -163,49 +171,80 @@ sap.ui.define([
         $select: "fecha,consumoRealTotal"
       });
 
-      oBinding1.requestContexts(0, 3).then(function (aContexts) {
-        var aUltimosConsumos = aContexts.map(function (oCtx) {
-          var oData = oCtx.getObject();
-          return {
-            fecha: _formatDate(oData.fecha),
-            consumo: oData.consumoRealTotal || 0
-          };
+      oBinding.requestContexts(0, 5).then(function (aContexts) {
+        // Ordenar cronológicamente ascendente (del más antiguo al más reciente)
+        var aConsumos = aContexts.map(function (oCtx) {
+          return oCtx.getObject();
+        }).sort(function (a, b) {
+          return new Date(a.fecha) - new Date(b.fecha);
         });
-        _log("Últimos consumos cargados", aUltimosConsumos);
-        that._updateModel("ultimosConsumos", aUltimosConsumos);
+
+        var aColumnas = that._mapearColumnas(aConsumos);
+        that._aLastColumnas = aColumnas;
+        _log("Columnas del chart cargadas", aColumnas);
+        that._renderColumnChart(aColumnas);
       }).catch(function (oErr) {
         _log("Error cargando últimos consumos", oErr);
       });
+    },
 
-      // Últimos 3 vehículos distintos en la ruta
-      var oBinding2 = oModel.bindList("/Viajes", null, [], [
-        new Filter("ruta_ID", FilterOperator.EQ, sRutaId),
-        new Filter("ID", FilterOperator.NE, sViajeId)
-      ], {
-        $orderby: "fecha desc",
-        $select: "fecha,consumoRealTotal,vehiculo_ID",
-        $expand: "vehiculo($select=placa)"
+    _mapearColumnas: function (aConsumos) {
+      if (!aConsumos || aConsumos.length === 0) {
+        return [];
+      }
+
+      return aConsumos.map(function (oData) {
+        return {
+          fecha: _formatDate(oData.fecha),
+          consumo: oData.consumoRealTotal || 0
+        };
       });
+    },
 
-      oBinding2.requestContexts(0, 100).then(function (aContexts) {
-        var mVehiculos = {};
-        var aConsumosPorVehiculo = [];
-        aContexts.forEach(function (oCtx) {
-          var oData = oCtx.getObject();
-          var sVehiculoId = oData.vehiculo_ID;
-          if (sVehiculoId && !mVehiculos[sVehiculoId]) {
-            mVehiculos[sVehiculoId] = true;
-            aConsumosPorVehiculo.push({
-              placa: oData.vehiculo && oData.vehiculo.placa ? oData.vehiculo.placa : sVehiculoId,
-              consumo: oData.consumoRealTotal || 0
-            });
-          }
+    _renderColumnChart: function (aColumnas) {
+      var oView = this.getView();
+      var oContainer = oView.byId("chartContainer");
+      if (!oContainer) {
+        _log("No se encontró el contenedor del chart");
+        return;
+      }
+
+      oContainer.removeAllItems();
+
+      if (!aColumnas || aColumnas.length === 0) {
+        oContainer.addItem(new Text({
+          text: "No hay consumos previos disponibles para esta ruta.",
+          class: "sapUiSmallMargin"
+        }));
+        _log("Sin columnas para renderizar");
+        return;
+      }
+
+      try {
+        var aChartColumns = aColumnas.map(function (oColumna) {
+          var sConsumo = _formatConsumo(oColumna.consumo);
+          return new ColumnMicroChartData({
+            title: oColumna.fecha,
+            value: oColumna.consumo,
+            displayValue: sConsumo + " L"
+          });
         });
-        _log("Consumos por vehículo cargados", aConsumosPorVehiculo);
-        that._updateModel("consumosPorVehiculo", aConsumosPorVehiculo.slice(0, 3));
-      }).catch(function (oErr) {
-        _log("Error cargando consumos por vehículo", oErr);
-      });
+
+        var oChart = new ColumnMicroChart({
+          width: "100%",
+          size: "L",
+          columns: aChartColumns
+        });
+
+        oContainer.addItem(oChart);
+        _log("Chart renderizado con columnas", aColumnas);
+      } catch (oErr) {
+        _log("Error renderizando chart", oErr);
+        oContainer.addItem(new Text({
+          text: "Error al renderizar chart: " + (oErr.message || oErr),
+          class: "sapUiSmallMargin"
+        }));
+      }
     },
 
     _findContext: function (oControl) {
@@ -221,17 +260,6 @@ sap.ui.define([
         return this._findContext(oControl.getParent());
       }
       return null;
-    },
-
-    _updateModel: function (sProperty, aData) {
-      var oView = this.getView();
-      var oModel = oView.getModel("headerCharts");
-      if (!oModel) {
-        return;
-      }
-      var oData = oModel.getData();
-      oData[sProperty] = aData;
-      oModel.setData(oData);
     }
   });
 });

@@ -15,7 +15,7 @@ sap.ui.define([
 
         onInit: function () {
             this._oCal = this.byId("planningCalendar");
-            this._sPeriodo = "mes";
+            this._sPeriodo = "semana";
             this._oFechaReferencia = new Date();
             this._bPrimeraCarga = true;
             this._bAplicandoVista = false;
@@ -78,10 +78,86 @@ sap.ui.define([
 
         onAppointmentSelect: function (oEvent) {
             var oAppointment = oEvent.getParameter("appointment");
-            if (oAppointment && oAppointment.getBindingContext()) {
-                var oData = oAppointment.getBindingContext().getObject();
-                MessageToast.show(oAppointment.getTitle() + " - " + oData.estatus);
+            if (!oAppointment) {
+                return;
             }
+            var oCtx = oAppointment.getBindingContext("calendario");
+            if (!oCtx) {
+                MessageToast.show("No se encontró el contexto del viaje");
+                return;
+            }
+            var oAppointmentData = oCtx.getObject();
+            if (!oAppointmentData || !oAppointmentData.viaje) {
+                MessageToast.show("No hay datos del viaje disponibles");
+                return;
+            }
+            this._abrirDialogoViaje(oAppointmentData.viaje);
+        },
+
+        onCloseDialog: function () {
+            var oDialog = this.byId("viajeDialog");
+            if (oDialog) {
+                oDialog.close();
+            }
+        },
+
+        _abrirDialogoViaje: function (oViaje) {
+            var oDialog = this.byId("viajeDialog");
+            if (!oDialog) {
+                MessageToast.show("No se encontró el diálogo");
+                return;
+            }
+            var oDatos = this._prepararDatosDialogo(oViaje);
+            if (!this._oDialogModel) {
+                this._oDialogModel = new JSONModel();
+                this.getView().setModel(this._oDialogModel, "dialog");
+            }
+            this._oDialogModel.setData(oDatos);
+            oDialog.open();
+        },
+
+        _prepararDatosDialogo: function (oViaje) {
+            var oVehiculo = oViaje.vehiculo || {};
+            return {
+                numeroViajeFormateado: oViaje.numeroViajeFormateado || String(oViaje.numeroViaje || ""),
+                nombreRuta: oViaje.nombreRuta || "—",
+                choferNombreCompleto: oViaje.choferNombreCompleto || "—",
+                placa: oVehiculo.placa || "—",
+                estatus: oViaje.estatus || "—",
+                estatusEstado: this._mapEstatusEstado(oViaje.estatus),
+                horaSalida: this._formatearFechaHora(oViaje.horaSalida),
+                horaLlegada: this._formatearFechaHora(oViaje.horaLlegada),
+                horaLlegadaReal: this._formatearFechaHora(oViaje.horaLlegadaReal),
+                origen: oViaje.origen || "—",
+                destino: oViaje.destino || "—",
+                kilometrosRecorridos: this._formatearNumero(oViaje.kilometrosRecorridos) + " km",
+                consumoRealTotal: this._formatearNumero(oViaje.consumoRealTotal) + " L"
+            };
+        },
+
+        _mapEstatusEstado: function (sEstatus) {
+            switch (sEstatus) {
+                case "EnCurso": return "Success";
+                case "Finalizado": return "Information";
+                case "Cancelado": return "Error";
+                default: return "None";
+            }
+        },
+
+        _formatearFechaHora: function (vFecha) {
+            if (!vFecha) {
+                return "—";
+            }
+            var oFmt = DateFormat.getDateTimeInstance({ pattern: "dd/MM/yyyy HH:mm" });
+            return oFmt.format(new Date(vFecha));
+        },
+
+        _formatearNumero: function (vNumero) {
+            var fNum = parseFloat(vNumero);
+            if (isNaN(fNum)) {
+                return "0.00";
+            }
+            return fNum.toFixed(2);
         },
 
         _cargarViajes: function () {
@@ -118,7 +194,7 @@ sap.ui.define([
                 "horaSalida le " + sFin
             ];
 
-            var sSelect = "ID,estatus,horaSalida,horaLlegada,horaLlegadaReal,nombreRuta,choferNombreCompleto,vehiculo_ID,vehiculo/placa";
+            var sSelect = "ID,estatus,horaSalida,horaLlegada,horaLlegadaReal,nombreRuta,choferNombreCompleto,vehiculo_ID,vehiculo/placa,origen,destino,kilometrosRecorridos,consumoRealTotal,numeroViaje,numeroViajeFormateado";
             var sExpand = "vehiculo";
             var sOrder = "horaSalida";
 
@@ -157,7 +233,8 @@ sap.ui.define([
                     endDate: oEnd,
                     title: sTitle,
                     text: oViaje.estatus,
-                    type: sType
+                    type: sType,
+                    viaje: oViaje
                 });
             }.bind(this));
 

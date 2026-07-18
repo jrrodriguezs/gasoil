@@ -43,4 +43,6 @@ entity Viaje : managed {
   rubro               : Association to Rubros;
   pesoIda             : Decimal(10,2);
   pesoVuelta          : Decimal(10,2);
+  numeroViaje         : Integer64;
+  numeroViajeFormateado : String;
 }

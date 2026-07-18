@@ -1,0 +1,6 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+  <VBox class="sapUiSmallMargin">
+    <Title text="{nombreRuta}" titleStyle="H3"/>
+    <Text text="{= String(Number(${numeroViaje}) || 0).padStart(5, '0') }"/>
+  </VBox>
+</core:FragmentDefinition>

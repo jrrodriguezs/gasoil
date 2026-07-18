@@ -2,6 +2,11 @@ const cds = require("@sap/cds");
 const { SELECT, UPDATE, where } = require("@sap/cds/lib/ql/cds-ql");
 const { calcularRendimiento } = require("../../utils/rendimientoCalculator");
 
+function formatNumeroViaje(numero) {
+  const n = Number(numero) || 0;
+  return String(n).padStart(5, '0');
+}
+
 module.exports = async (srv) => {
   const { Viajes, Vehiculos, Motores, Rutas, Choferes, PreciosHistoricos } = cds.entities("ConfigService");
 
@@ -10,6 +15,12 @@ module.exports = async (srv) => {
     const aViajes = Array.isArray(viajes) ? viajes : [viajes];
     for (const viaje of aViajes) {
       if (!viaje) continue;
+      // Solo recalcular el formateado si se conoce el número; de lo contrario
+      // se conserva el valor persistido (por ejemplo, cuando el cliente solo
+      // pidió numeroViajeFormateado y no numeroViaje).
+      if (viaje.numeroViaje !== undefined && viaje.numeroViaje !== null) {
+        viaje.numeroViajeFormateado = formatNumeroViaje(viaje.numeroViaje);
+      }
       const sRutaId = viaje.ruta_ID;
       const sVehiculoId = viaje.vehiculo_ID;
       const sViajeId = viaje.ID;
@@ -53,7 +64,30 @@ module.exports = async (srv) => {
     }
   });
 
+  // Los borradores también deben calcular el número formateado, ya que el ObjectPage
+  // muestra los datos del draft mientras se edita.
+  srv.after("READ", Viajes.drafts, async (viajes) => {
+    if (!viajes) return;
+    const aViajes = Array.isArray(viajes) ? viajes : [viajes];
+    for (const viaje of aViajes) {
+      if (!viaje) continue;
+      if (viaje.numeroViaje !== undefined && viaje.numeroViaje !== null) {
+        viaje.numeroViajeFormateado = formatNumeroViaje(viaje.numeroViaje);
+      }
+    }
+  });
+
   srv.before("UPDATE", Viajes.drafts, async (req) => {
+    // Asegurar que el número de viaje formateado esté sincronizado con el número asignado
+    let numeroViaje = req.data.numeroViaje;
+    if (numeroViaje === undefined) {
+      const viajeActual = await SELECT.one.from(Viajes.drafts)
+        .where({ ID: req.data.ID })
+        .columns(viaje => { viaje.numeroViaje; });
+      numeroViaje = viajeActual?.numeroViaje;
+    }
+    req.data.numeroViajeFormateado = formatNumeroViaje(numeroViaje);
+
     // ── Validación de transiciones de estado (FIX-026) ──
     if (req.data.estatus !== undefined) {
       const viajeActual = await SELECT.one.from(Viajes.drafts)
@@ -143,6 +177,11 @@ module.exports = async (srv) => {
     req.data.rendimientoTeorico = 0;
     req.data.combustibleTeorico = 0;
     req.data.costoTeorico = 0;
+
+    const maxResult = await SELECT.one.from(Viajes).columns('max(numeroViaje) as maxNumero');
+    const maxNumero = maxResult && maxResult.maxNumero ? Number(maxResult.maxNumero) : 0;
+    req.data.numeroViaje = maxNumero + 1;
+    req.data.numeroViajeFormateado = formatNumeroViaje(req.data.numeroViaje);
   });
 
 

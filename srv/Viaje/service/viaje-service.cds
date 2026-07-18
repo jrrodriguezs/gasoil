@@ -60,7 +60,9 @@ extend service ConfigService with {
     vehiculo.rendimientoBase as vehiculoRendimientoBase : Decimal(5,2),
     chofer.cedula as choferCedula : String,
     chofer.telefono as choferTelefono : String,
-    chofer.choferImage as choferImagen : String
+    chofer.choferImage as choferImagen : String,
+    numeroViaje,
+    numeroViajeFormateado
   } excluding { logs } actions {
      action changeStatus()
   };

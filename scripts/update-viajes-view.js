@@ -61,8 +61,10 @@ const viewDDL = `CREATE OR REPLACE VIEW configservice_viajes AS SELECT
   vehiculo_1.rendimientoBase AS vehiculorendimientobase,
   chofer_2.cedula AS chofercedula,
   chofer_2.telefono AS chofertelefono,
-  chofer_2.choferImage AS choferimagen
-FROM (((gas_app_Viaje AS DbViaje_0 LEFT JOIN gas_app_Vehiculo AS vehiculo_1 ON DbViaje_0.vehiculo_ID = vehiculo_1.ID) LEFT JOIN gas_app_Chofer AS chofer_2 ON DbViaje_0.chofer_ID = chofer_2.ID) LEFT JOIN gas_app_Ruta AS ruta_3 ON DbViaje_0.ruta_ID = ruta_3.ID);`;
+  chofer_2.choferImage AS choferimagen,
+  DbViaje_0.numeroViaje AS numeroviaje,
+  DbViaje_0.numeroViajeFormateado AS numeroviajeformateado
+FROM (((gas_app_Viaje AS DbViaje_0 LEFT JOIN gas_app_Vehiculo AS vehiculo_1 ON DbViaje_0.vehiculo_ID = vehiculo_1.ID) LEFT JOIN gas_app_Chofer AS chofer_2 ON DbViaje_0.chofer_ID = chofer_2.ID) LEFT JOIN gas_app_Ruta AS ruta_3 ON DbViaje_0.ruta_ID = ruta_3.ID));`;
 
 async function run() {
   try {

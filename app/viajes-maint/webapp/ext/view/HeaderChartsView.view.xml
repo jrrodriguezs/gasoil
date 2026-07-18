@@ -1,40 +1,9 @@
 <mvc:View
   controllerName="viajesmaint.ext.controller.HeaderChartsView"
   xmlns:mvc="sap.ui.core.mvc"
-  xmlns:microchart="sap.suite.ui.microchart"
   xmlns="sap.m">
 
-  <VBox width="100%">
-    <HBox
-      width="100%"
-      renderType="Bare">
-      <microchart:ComparisonMicroChart
-        scale="L"
-        size="L"
-        width="50%"
-        class="sapUiSmallMarginBeginEnd"
-        data="{headerCharts>/ultimosConsumos}">
-        <microchart:data>
-          <microchart:ComparisonMicroChartData
-            title="{headerCharts>fecha}"
-            value="{headerCharts>consumo}"
-            displayValue="{headerCharts>consumo} L"/>
-        </microchart:data>
-      </microchart:ComparisonMicroChart>
-      <microchart:ComparisonMicroChart
-        scale="L"
-        size="L"
-        width="50%"
-        class="sapUiSmallMarginBeginEnd"
-        data="{headerCharts>/consumosPorVehiculo}">
-        <microchart:data>
-          <microchart:ComparisonMicroChartData
-            title="{headerCharts>placa}"
-            value="{headerCharts>consumo}"
-            displayValue="{headerCharts>consumo} L"/>
-        </microchart:data>
-      </microchart:ComparisonMicroChart>
-    </HBox>
+  <VBox width="100%" id="chartContainer">
   </VBox>
 
 </mvc:View>

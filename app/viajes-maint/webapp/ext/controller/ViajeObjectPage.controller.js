@@ -5,8 +5,9 @@ sap.ui.define([
   "sap/ui/core/mvc/ControllerExtension",
   "sap/ui/model/Filter",
   "sap/ui/model/FilterOperator",
-  "sap/ui/model/json/JSONModel"
-], function (ControllerExtension, Filter, FilterOperator, JSONModel) {
+  "sap/ui/core/Core",
+  "sap/m/MessageToast"
+], function (ControllerExtension, Filter, FilterOperator, Core, MessageToast) {
   "use strict";
 
   function _log(sMsg, oData) {
@@ -14,55 +15,41 @@ sap.ui.define([
     console.log("[ViajeObjectPage] " + sMsg, oData || "");
   }
 
-  function _formatDate(sDate) {
-    if (!sDate) {
-      return "";
-    }
-    var oDate = new Date(sDate);
-    if (isNaN(oDate.getTime())) {
-      return String(sDate);
-    }
-    return oDate.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric"
-    });
+  function _formatNumeroViaje(iNumero) {
+    var n = Number(iNumero) || 0;
+    return String(n).padStart(5, "0");
   }
 
   return ControllerExtension.extend("viajesmaint.ext.controller.ViajeObjectPage", {
 
-    onInit: function () {
-      _log("onInit ejecutado");
-      var oView = this.base && this.base.getView ? this.base.getView() : null;
-      if (!oView) {
-        _log("No se encontró la vista base");
-        return;
-      }
-
-      this._oRetryTimeout = null;
-      this._iMapViewRetries = 0;
-      this._MAX_MAP_VIEW_RETRIES = 600;
-      this._sLastContextPath = null;
-
-      // Modelo local para los micro charts del header
-      oView.setModel(new JSONModel({
-        ultimosConsumos: [],
-        consumosPorVehiculo: []
-      }), "headerCharts");
-
-      var that = this;
-      oView.addEventDelegate({
-        onAfterRendering: function () {
-          _log("onAfterRendering de ObjectPage");
-          that._propagateContext();
+    override: {
+      onInit: function () {
+        _log("onInit ejecutado");
+        var oView = this.base && this.base.getView ? this.base.getView() : null;
+        if (!oView) {
+          _log("No se encontró la vista base");
+          return;
         }
-      }, oView);
-    },
 
-    onExit: function () {
-      if (this._oRetryTimeout) {
-        clearTimeout(this._oRetryTimeout);
         this._oRetryTimeout = null;
+        this._iMapViewRetries = 0;
+        this._MAX_MAP_VIEW_RETRIES = 600;
+        this._sLastContextPath = null;
+
+        var that = this;
+        oView.addEventDelegate({
+          onAfterRendering: function () {
+            _log("onAfterRendering de ObjectPage");
+            that._propagateContext();
+          }
+        }, oView);
+      },
+
+      onExit: function () {
+        if (this._oRetryTimeout) {
+          clearTimeout(this._oRetryTimeout);
+          this._oRetryTimeout = null;
+        }
       }
     },
 
@@ -97,10 +84,9 @@ sap.ui.define([
         this._sLastContextPath = sPath;
         var sRutaId = oContext.getProperty("ruta_ID");
         var sViajeId = oContext.getProperty("ID");
-        _log("Ruta y viaje para charts", { rutaId: sRutaId, viajeId: sViajeId });
-        if (sRutaId && sViajeId) {
-          this._loadHeaderCharts(sRutaId, sViajeId);
-        }
+        _log("Ruta y viaje para header", { rutaId: sRutaId, viajeId: sViajeId });
+        // Actualizar el título del header con nombre de ruta y número de viaje
+        this._updateHeaderTitle(oContext);
       }
 
       var oMapView = this._findMapView(oView);
@@ -121,97 +107,138 @@ sap.ui.define([
       }
     },
 
-    _loadHeaderCharts: function (sRutaId, sViajeId) {
+    _updateHeaderTitle: function (oContext) {
       var that = this;
-      var oView = this.base.getView();
-      var oModel = oView.getModel();
-      if (!oModel) {
-        _log("No se encontró el modelo OData");
+      var oView = this.base && this.base.getView ? this.base.getView() : null;
+      var oModel = oView ? oView.getModel() : null;
+      if (!oView || !oModel || !oContext) {
         return;
       }
 
-      // Últimos 3 consumos de la ruta (cualquier vehículo, excluyendo el viaje actual)
-      var oBinding1 = oModel.bindList("/Viajes", null, [], [
-        new Filter("ruta_ID", FilterOperator.EQ, sRutaId),
-        new Filter("ID", FilterOperator.NE, sViajeId)
-      ], {
-        $orderby: "fecha desc",
-        $select: "fecha,consumoRealTotal"
-      });
-
-      oBinding1.requestContexts(0, 3).then(function (aContexts) {
-        var aUltimosConsumos = aContexts.map(function (oCtx) {
-          var oData = oCtx.getObject();
-          return {
-            fecha: _formatDate(oData.fecha),
-            consumo: oData.consumoRealTotal || 0
-          };
-        });
-        _log("Últimos consumos cargados", aUltimosConsumos);
-        that._updateHeaderChartsModel("ultimosConsumos", aUltimosConsumos);
-      }).catch(function (oErr) {
-        _log("Error cargando últimos consumos", oErr);
-      });
-
-      // Últimos 3 vehículos distintos en la ruta
-      var oBinding2 = oModel.bindList("/Viajes", null, [], [
-        new Filter("ruta_ID", FilterOperator.EQ, sRutaId),
-        new Filter("ID", FilterOperator.NE, sViajeId)
-      ], {
-        $orderby: "fecha desc",
-        $select: "fecha,consumoRealTotal,vehiculo_ID",
-        $expand: "vehiculo($select=placa)"
-      });
-
-      oBinding2.requestContexts(0, 100).then(function (aContexts) {
-        var mVehiculos = {};
-        var aConsumosPorVehiculo = [];
-        aContexts.forEach(function (oCtx) {
-          var oData = oCtx.getObject();
-          var sVehiculoId = oData.vehiculo_ID;
-          if (sVehiculoId && !mVehiculos[sVehiculoId]) {
-            mVehiculos[sVehiculoId] = true;
-            aConsumosPorVehiculo.push({
-              placa: oData.vehiculo && oData.vehiculo.placa ? oData.vehiculo.placa : sVehiculoId,
-              consumo: oData.consumoRealTotal || 0
-            });
-          }
-        });
-        _log("Consumos por vehículo cargados", aConsumosPorVehiculo);
-        that._updateHeaderChartsModel("consumosPorVehiculo", aConsumosPorVehiculo.slice(0, 3));
-      }).catch(function (oErr) {
-        _log("Error cargando consumos por vehículo", oErr);
-      });
-    },
-
-    _updateHeaderChartsModel: function (sProperty, aData) {
-      var oView = this.base.getView();
-      var oModel = oView.getModel("headerCharts");
-      if (!oModel) {
+      var sViajeId = oContext.getProperty("ID");
+      if (!sViajeId) {
+        _log("No se encontró el ID del viaje para actualizar el header");
         return;
       }
-      var oData = oModel.getData();
-      oData[sProperty] = aData;
-      oModel.setData(oData);
+
+      // Se solicitan explícitamente el número de viaje formateado y el destino de la ruta
+      // porque el binding por defecto del ObjectPage no los incluye en el header.
+      var oBinding = oModel.bindList("/Viajes", null, [], [
+        new Filter("ID", FilterOperator.EQ, sViajeId)
+      ], {
+        $select: "numeroViaje,numeroViajeFormateado,ruta_ID",
+        $expand: "ruta($select=destino)"
+      });
+
+      oBinding.requestContexts(0, 1).then(function (aContexts) {
+        if (!aContexts || aContexts.length === 0) {
+          return;
+        }
+        var oData = aContexts[0].getObject();
+        var sNombreRuta = oData.ruta && oData.ruta.destino ? oData.ruta.destino : "";
+        // Se usa el valor formateado del backend; si no estuviera disponible, se calcula localmente.
+        var sNumeroFormateado = oData.numeroViajeFormateado || _formatNumeroViaje(oData.numeroViaje);
+        _log("Datos para header obtenidos", { nombreRuta: sNombreRuta, numeroViaje: oData.numeroViaje, numeroFormateado: sNumeroFormateado });
+        that._setHeaderTitle(sNombreRuta, sNumeroFormateado, true);
+      }).catch(function (oErr) {
+        _log("Error obteniendo datos para header", oErr);
+      });
     },
 
-    _findMapView: function (oControl) {
+    _setHeaderTitle: function (sNombreRuta, sNumeroViaje, bYaFormateado, iIntentos) {
+      var that = this;
+      var oView = this.base && this.base.getView ? this.base.getView() : null;
+      if (!oView) {
+        return;
+      }
+
+      iIntentos = iIntentos || 0;
+      var MAX_INTENTOS = 30;
+
+      var oObjectPage = this._findObjectPageLayout(oView);
+      if (!oObjectPage) {
+        if (iIntentos < MAX_INTENTOS) {
+          _log("ObjectPageLayout no encontrado, reintentando...", iIntentos);
+          setTimeout(function () {
+            that._setHeaderTitle(sNombreRuta, sNumeroViaje, bYaFormateado, iIntentos + 1);
+          }, 200);
+        } else {
+          _log("No se encontró ObjectPageLayout para actualizar el header después de " + MAX_INTENTOS + " intentos");
+        }
+        return;
+      }
+
+      var oHeader = oObjectPage.getHeaderTitle();
+      if (!oHeader) {
+        if (iIntentos < MAX_INTENTOS) {
+          _log("Título del header no encontrado, reintentando...", iIntentos);
+          setTimeout(function () {
+            that._setHeaderTitle(sNombreRuta, sNumeroViaje, bYaFormateado, iIntentos + 1);
+          }, 200);
+        } else {
+          _log("No se encontró el título del header después de " + MAX_INTENTOS + " intentos");
+        }
+        return;
+      }
+
+      var sNumeroFormateado = bYaFormateado ? sNumeroViaje : _formatNumeroViaje(sNumeroViaje);
+
+      if (oHeader.setObjectTitle) {
+        oHeader.setObjectTitle(sNombreRuta || "");
+      }
+      if (oHeader.setObjectSubtitle) {
+        oHeader.setObjectSubtitle(sNumeroFormateado);
+      }
+      MessageToast.show("Viaje " + sNumeroFormateado + " - " + sNombreRuta, {
+        duration: 2000,
+        width: "20em"
+      });
+      _log("Header actualizado", { titulo: sNombreRuta, subtitulo: sNumeroFormateado });
+    },
+
+    _findObjectPageLayout: function (oControl) {
       if (!oControl) {
         return null;
       }
 
-      if (oControl.isA && oControl.isA("sap.ui.core.mvc.XMLView") &&
-          oControl.getViewName && oControl.getViewName() === "viajesmaint.ext.view.MapaRutaView") {
+      if (oControl.isA && oControl.isA("sap.uxap.ObjectPageLayout")) {
         return oControl;
       }
 
+      // Buscar en los agregados de la vista
       if (oControl.findAggregatedObjects) {
         var aFound = oControl.findAggregatedObjects(true, function (oObj) {
-          return oObj.isA && oObj.isA("sap.ui.core.mvc.XMLView") &&
-            oObj.getViewName && oObj.getViewName() === "viajesmaint.ext.view.MapaRutaView";
+          return oObj.isA && oObj.isA("sap.uxap.ObjectPageLayout");
         });
         if (aFound && aFound.length > 0) {
           return aFound[0];
+        }
+      }
+
+      // Buscar en el contenido de la vista
+      if (oControl.getContent) {
+        var aContent = oControl.getContent ? oControl.getContent() : [];
+        if (aContent && aContent.length) {
+          for (var i = 0; i < aContent.length; i++) {
+            var oFound = this._findObjectPageLayout(aContent[i]);
+            if (oFound) {
+              return oFound;
+            }
+          }
+        }
+      }
+
+      // Buscar por ID relativo en la vista
+      var oById = oControl.byId ? oControl.byId("fe::ObjectPage") : null;
+      if (oById && oById.isA && oById.isA("sap.uxap.ObjectPageLayout")) {
+        return oById;
+      }
+
+      // Último recurso: buscar en el Core por tipo
+      var aAll = Core.getControls ? Core.getControls() : [];
+      for (var j = 0; j < aAll.length; j++) {
+        if (aAll[j].isA && aAll[j].isA("sap.uxap.ObjectPageLayout")) {
+          return aAll[j];
         }
       }
 
