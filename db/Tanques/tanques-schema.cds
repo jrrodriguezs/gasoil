@@ -1,6 +1,6 @@
 using { managed, cuid } from '@sap/cds/common';
 using { gas.app.Almacen } from '../Almacen/almacen-schema';
-using { gas.app.OrdenCarga } from '../OrdenCarga/orden-carga-schema';
+using { gas.app.OrdenCarga, gas.app.TankXOrden } from '../OrdenCarga/orden-carga-schema';
 using { gas.common.VH_State as TanqueEstado } from '../common';
 
 namespace gas.app;
@@ -17,5 +17,5 @@ entity Tanque : managed, cuid {
   ultimaFechaRecarga   : DateTime @assert.notNull; // Fecha obligatoria
   descripcion          : String;
   estadoTanque         : Association to TanqueEstado;
-  ordenesCarga         : Association to many OrdenCarga on ordenesCarga.tanque = $self;
+  tankXOrden           : Association to many TankXOrden on tankXOrden.tanque = $self;
 }

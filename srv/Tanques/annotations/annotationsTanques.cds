@@ -42,9 +42,9 @@ annotate ConfigService.Tanques with @(
       },
       {
         $Type : 'UI.ReferenceFacet',
-        ID : 'OrdenesCarga',
-        Label : 'Ordenes de carga',
-        Target : 'ordenesCarga/@UI.LineItem'
+        ID : 'DistribucionCargas',
+        Label : 'Distribucion de cargas',
+        Target : 'tankXOrden/@UI.LineItem'
       }
     ],
     Identification : [
